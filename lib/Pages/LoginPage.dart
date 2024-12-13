@@ -13,14 +13,23 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  bool isLoading = false; // Biến để kiểm tra trạng thái tải
 
   // Hàm đăng nhập
   void login() async {
+    setState(() {
+      isLoading = true; // Bật trạng thái tải khi đăng nhập
+    });
+
     var user = await AuthService.login(email: email, password: password);
+
+    setState(() {
+      isLoading = false; // Tắt trạng thái tải khi xong
+    });
 
     if (user != null) {
       // Lưu thông tin người dùng vào SharedPreferences khi đăng nhập thành công
-      saveUserDetails(user.email!);
+      saveUserDetails(user.email!, user.role);
 
       // Nếu đăng nhập thành công, chuyển đến trang chủ
       Navigator.pushReplacement(
@@ -36,10 +45,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // Lưu thông tin người dùng vào SharedPreferences
-  Future<void> saveUserDetails(String email) async {
+  Future<void> saveUserDetails(String email, String role) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
         'userEmail', email); // Lưu email vào SharedPreferences
+    await prefs.setString('userRole', role); // Lưu role vào SharedPreferences
   }
 
   @override
@@ -74,14 +84,16 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    login();
-                  }
-                },
-                child: Text('Đăng nhập'),
-              ),
+              isLoading
+                  ? CircularProgressIndicator() // Hiển thị loading khi đang đăng nhập
+                  : ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          login();
+                        }
+                      },
+                      child: Text('Đăng nhập'),
+                    ),
               TextButton(
                 onPressed: () {
                   // Chuyển đến màn hình đăng ký

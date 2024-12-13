@@ -9,19 +9,19 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
-  String userName = '';
-  String email = '';
-  String phone = '';
-  String address = '';
-  String password = '';
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   void signUp() async {
     bool isSuccess = await AuthService.signUp(
-      userName: userName,
-      email: email,
-      phone: phone,
-      address: address,
-      password: password,
+      userName: _userNameController.text,
+      email: _emailController.text,
+      phone: _phoneController.text,
+      address: _addressController.text,
+      password: _passwordController.text,
     );
 
     if (isSuccess) {
@@ -39,6 +39,17 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   @override
+  void dispose() {
+    // Giải phóng bộ điều khiển khi không còn sử dụng
+    _userNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Đăng ký')),
@@ -49,8 +60,8 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             children: [
               TextFormField(
+                controller: _userNameController,
                 decoration: InputDecoration(labelText: 'Tên người dùng'),
-                onChanged: (value) => userName = value,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập tên người dùng';
@@ -59,18 +70,27 @@ class _SignUpPageState extends State<SignUpPage> {
                 },
               ),
               TextFormField(
+                controller: _emailController,
                 decoration: InputDecoration(labelText: 'Email'),
-                onChanged: (value) => email = value,
+                keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập email';
+                  }
+                  // Kiểm tra định dạng email hợp lệ
+                  String pattern =
+                      r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}\b';
+                  RegExp regex = RegExp(pattern);
+                  if (!regex.hasMatch(value)) {
+                    return 'Vui lòng nhập email hợp lệ';
                   }
                   return null;
                 },
               ),
               TextFormField(
+                controller: _phoneController,
                 decoration: InputDecoration(labelText: 'Số điện thoại'),
-                onChanged: (value) => phone = value,
+                keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập số điện thoại';
@@ -79,8 +99,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 },
               ),
               TextFormField(
+                controller: _addressController,
                 decoration: InputDecoration(labelText: 'Địa chỉ'),
-                onChanged: (value) => address = value,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập địa chỉ';
@@ -89,12 +109,16 @@ class _SignUpPageState extends State<SignUpPage> {
                 },
               ),
               TextFormField(
+                controller: _passwordController,
                 decoration: InputDecoration(labelText: 'Mật khẩu'),
                 obscureText: true,
-                onChanged: (value) => password = value,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập mật khẩu';
+                  }
+                  // Kiểm tra mật khẩu có ít nhất 6 ký tự
+                  if (value.length < 6) {
+                    return 'Mật khẩu phải có ít nhất 6 ký tự';
                   }
                   return null;
                 },

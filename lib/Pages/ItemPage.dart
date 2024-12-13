@@ -8,6 +8,10 @@ import 'package:food_del/Widgets/ItemBottomNavBar.dart';
 class ItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Lấy thông tin món ăn từ arguments
+    final Map<String, dynamic> food =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(top: 5),
@@ -16,11 +20,9 @@ class ItemPage extends StatelessWidget {
             Appbarwidget(),
             Padding(
               padding: EdgeInsets.all(16),
-              child: Image.asset(
-                "images/pizza.png",
+              child: Image.network(
+                "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
                 height: 300,
-                // width: double.infinity,
-                // // width: 100,
               ),
             ),
             Arc(
@@ -40,7 +42,8 @@ class ItemPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             RatingBar.builder(
-                              initialRating: 4,
+                              initialRating:
+                                  food['foodRating']?.toDouble() ?? 4.0,
                               minRating: 1,
                               direction: Axis.horizontal,
                               itemCount: 5,
@@ -50,28 +53,25 @@ class ItemPage extends StatelessWidget {
                                 Icons.star,
                                 color: Colors.red,
                               ),
-                              onRatingUpdate: (index) {},
+                              onRatingUpdate: (rating) {},
                             ),
                             Text(
-                              "\$10",
+                              "\$${food['foodPrice'] ?? 0}",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                          top: 10,
-                          bottom: 20,
-                        ),
+                        padding: EdgeInsets.only(top: 10, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Hot Pizza",
+                              food['foodName'] ?? "No name",
                               style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
@@ -105,27 +105,23 @@ class ItemPage extends StatelessWidget {
                                     CupertinoIcons.add,
                                     color: Colors.white,
                                     size: 20,
-                                  )
+                                  ),
                                 ],
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 15,
-                        ),
+                        padding: EdgeInsets.symmetric(vertical: 15),
                         child: Text(
-                          "Tase Our Hot Pizza at low price, this is famous Pizza and you will love it. It will cost you price at low price, we hope you enjoy and order times .",
+                          food['foodDescription'] ?? "No description",
                           style: TextStyle(fontSize: 16),
                           textAlign: TextAlign.justify,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 15,
-                        ),
+                        padding: EdgeInsets.symmetric(vertical: 15),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
