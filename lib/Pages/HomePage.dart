@@ -358,7 +358,7 @@ class _HomepageState extends State<Homepage> {
         ]),
         child: FloatingActionButton(
           onPressed: () {
-            Navigator.pushNamed(context, "cartPage");
+            Navigator.pushNamed(context, '/cart');
           },
           child: Icon(
             CupertinoIcons.cart,

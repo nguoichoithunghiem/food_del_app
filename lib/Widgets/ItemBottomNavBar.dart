@@ -2,6 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ItemBottomNavBar extends StatelessWidget {
+  final VoidCallback onAddToCart;
+
+  // Nhận callback từ ItemPage
+  ItemBottomNavBar({required this.onAddToCart});
+
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
@@ -13,36 +18,16 @@ class ItemBottomNavBar extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  "Total:",
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "\$10",
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
+                SizedBox(width: 15),
               ],
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: onAddToCart, // Gọi hàm khi nhấn vào nút
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.red),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
                 padding: MaterialStateProperty.all(
-                  EdgeInsets.symmetric(
-                    vertical: 13,
-                    horizontal: 15,
-                  ),
+                  EdgeInsets.symmetric(vertical: 13, horizontal: 15),
                 ),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
@@ -53,7 +38,7 @@ class ItemBottomNavBar extends StatelessWidget {
                 "Add To Cart",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            )
+            ),
           ],
         ),
       ),

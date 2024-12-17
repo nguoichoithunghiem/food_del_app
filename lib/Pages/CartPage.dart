@@ -1,352 +1,153 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:food_del/Widgets/AppBarWidget.dart';
+import 'package:food_del/Service/OrderService.dart';
+import 'package:food_del/Service/cart_service.dart';
 import 'package:food_del/Widgets/CartBottomNavBar.dart';
 import 'package:food_del/Widgets/DrawerWidget.dart';
+import 'package:provider/provider.dart'; // Import provider
 
-class Cartpage extends StatelessWidget {
+class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Lấy CartService từ Provider
+    final cartService = Provider.of<CartService>(context);
+    final orderService =
+        OrderService(cartService: cartService); // Khởi tạo OrderService
+
     return Scaffold(
-      body: ListView(
-        children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Appbarwidget(),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: 20,
-                      left: 10,
-                      bottom: 10,
-                    ),
-                    child: Text(
-                      "Order List",
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 9),
-                    child: Container(
-                      width: 380,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              "images/pizza.png",
-                              height: 80,
-                              width: 150,
-                            ),
-                          ),
-                          Container(
-                            width: 150,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  "Hot Pizza",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Taste Our Hot Pizza",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "\$10",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5),
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.add,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    "2",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.minus,
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 9),
-                    child: Container(
-                      width: 380,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              "images/burger.png",
-                              height: 80,
-                              width: 150,
-                            ),
-                          ),
-                          Container(
-                            width: 150,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  "Hot Burger",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Taste Our Hot Burger",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "\$10",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5),
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.add,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    "1",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.minus,
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 10,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Items:",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                Text(
-                                  "10",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: Colors.black,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 10,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Sub-Total:",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                Text(
-                                  "\$60",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: const Color.fromARGB(255, 146, 146, 146),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 10,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Delivery:",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                Text(
-                                  "\$20",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: const Color.fromARGB(255, 146, 146, 146),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 10,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Total:",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "\$80",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        title: Text("Your Cart"),
       ),
-      drawer: DrawerWidget(),
+      body: cartService.items.isEmpty
+          ? Center(child: Text("Your cart is empty"))
+          : ListView.builder(
+              itemCount: cartService.items.length,
+              itemBuilder: (context, index) {
+                var cartItem = cartService.items[index];
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Hình ảnh món ăn
+                        Container(
+                          alignment: Alignment.center,
+                          child: Image.network(
+                            'https://food-del-web-backend.onrender.com/images/${cartItem.foodImage}', // Đảm bảo bạn dùng Image.network
+                            height: 80,
+                            width: 80, // Giảm kích thước hình ảnh để tránh tràn
+                            fit: BoxFit.cover, // Đảm bảo hình ảnh không bị vỡ
+                          ),
+                        ),
+                        // Thông tin món ăn
+                        Expanded(
+                          // Dùng Expanded thay cho Flexible để đảm bảo chiếm toàn bộ không gian còn lại
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  cartItem.foodName,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow
+                                      .ellipsis, // Tránh tràn văn bản dài
+                                  maxLines: 1,
+                                ),
+                                Text(
+                                  "Taste Our ${cartItem.foodName}",
+                                  style: TextStyle(fontSize: 14),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                Text(
+                                  "${cartItem.price.toStringAsFixed(0)} VNĐ",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Số lượng và cập nhật số lượng món ăn
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                // Nút cộng số lượng
+                                IconButton(
+                                  icon: Icon(CupertinoIcons.add,
+                                      color: Colors.white),
+                                  onPressed: () {
+                                    cartService.updateQuantity(
+                                        cartItem.foodName,
+                                        cartItem.quantity + 1);
+                                  },
+                                ),
+                                Text(
+                                  "${cartItem.quantity}",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                                // Nút trừ số lượng
+                                IconButton(
+                                  icon: Icon(CupertinoIcons.minus,
+                                      color: Colors.white),
+                                  onPressed: () {
+                                    if (cartItem.quantity > 1) {
+                                      cartService.updateQuantity(
+                                          cartItem.foodName,
+                                          cartItem.quantity - 1);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Xóa món ăn khỏi giỏ hàng
+                        IconButton(
+                          icon: Icon(Icons.remove_circle, color: Colors.red),
+                          onPressed: () {
+                            cartService.removeItem(cartItem.foodName);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+      // Thanh điều hướng dưới cùng
       bottomNavigationBar: CartBottomNavBar(),
+      // Menu điều hướng
+      drawer: DrawerWidget(),
     );
   }
 }

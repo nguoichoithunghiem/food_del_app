@@ -2,15 +2,28 @@ import 'package:clippy_flutter/arc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:food_del/Models/cart_item.dart';
 import 'package:food_del/Widgets/AppBarWidget.dart';
 import 'package:food_del/Widgets/ItemBottomNavBar.dart';
+import 'package:food_del/Service/cart_service.dart'; // Import CartService
+import 'package:provider/provider.dart'; // Import Provider
 
-class ItemPage extends StatelessWidget {
+class ItemPage extends StatefulWidget {
+  @override
+  _ItemPageState createState() => _ItemPageState();
+}
+
+class _ItemPageState extends State<ItemPage> {
+  int _quantity = 1; // Biến lưu số lượng món ăn
+
   @override
   Widget build(BuildContext context) {
     // Lấy thông tin món ăn từ arguments
     final Map<String, dynamic> food =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    // Lấy CartService từ Provider
+    final cartService = Provider.of<CartService>(context);
 
     return Scaffold(
       body: Padding(
@@ -78,7 +91,7 @@ class ItemPage extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              width: 90,
+                              width: 120,
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                 color: Colors.red,
@@ -88,23 +101,37 @@ class ItemPage extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Icon(
-                                    CupertinoIcons.minus,
-                                    color: Colors.white,
-                                    size: 20,
+                                  IconButton(
+                                    icon: Icon(
+                                      CupertinoIcons.minus,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (_quantity > 1) _quantity--;
+                                      });
+                                    },
                                   ),
                                   Text(
-                                    "1",
+                                    "$_quantity",
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Icon(
-                                    CupertinoIcons.add,
-                                    color: Colors.white,
-                                    size: 20,
+                                  IconButton(
+                                    icon: Icon(
+                                      CupertinoIcons.add,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _quantity++;
+                                      });
+                                    },
                                   ),
                                 ],
                               ),
@@ -161,7 +188,27 @@ class ItemPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: ItemBottomNavBar(),
+      bottomNavigationBar: ItemBottomNavBar(
+        onAddToCart: () {
+          // Khi nhấn nút "Add to Cart"
+          CartItem newItem = CartItem(
+            foodName: food['foodName'],
+            foodImage: food['foodImage'],
+            price: (food['foodPrice'] ?? 0).toDouble(),
+            quantity: _quantity,
+          );
+
+          // Thêm món ăn vào giỏ hàng
+          cartService.addItem(newItem);
+
+          // Hiển thị thông báo cho người dùng
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("${food['foodName']} added to cart"),
+            ),
+          );
+        },
+      ),
     );
   }
 }

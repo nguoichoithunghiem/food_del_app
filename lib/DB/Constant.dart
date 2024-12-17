@@ -3,3 +3,7 @@ const MONGO_URL =
 const COLLECTION_USER = "users";
 const COLLECTION_FOOD = "foods";
 const COLLECTION_CATEGORY = "categories";
+const COLLECTION_ORDER = "orders";
+const COLLECTION_ORDERDETAIL = "orderdetails";
+const COLLECTION_REVIEW = "reviews";
+const COLLECTION_COUPON = "coupons";

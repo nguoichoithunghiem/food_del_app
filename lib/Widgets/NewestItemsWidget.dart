@@ -1,14 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:food_del/Service/FoodService.dart'; // Import FoodService
+import 'package:food_del/Models/cart_item.dart';
+import 'package:food_del/Service/FoodService.dart';
+import 'package:food_del/Service/cart_service.dart'; // Import CartService
+import 'package:provider/provider.dart'; // Import Provider
 
 class NewestItemsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Lấy CartService từ Provider
+    final cartService = Provider.of<CartService>(context);
+
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: FoodService
-          .getFoods(), // Gọi phương thức lấy dữ liệu món ăn từ MongoDB
+      // Lấy danh sách món ăn từ FoodService
+      future: FoodService.getFoods(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -51,6 +57,7 @@ class NewestItemsWidget extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
+                        // Hình ảnh món ăn
                         InkWell(
                           onTap: () {
                             // Điều hướng đến trang chi tiết món ăn và truyền dữ liệu
@@ -63,11 +70,10 @@ class NewestItemsWidget extends StatelessWidget {
                           child: Container(
                             alignment: Alignment.center,
                             child: Image.network(
-                              "https://food-del-web-backend.onrender.com/images/${food['foodImage']}", // URL ảnh từ MongoDB
+                              "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
                               height: 130,
-                              width:
-                                  120, // Đảm bảo ảnh có kích thước phù hợp với không gian
-                              fit: BoxFit.cover, // Điều chỉnh cách hiển thị ảnh
+                              width: 100,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
@@ -108,7 +114,7 @@ class NewestItemsWidget extends StatelessWidget {
                                 onRatingUpdate: (rating) {},
                               ),
                               Text(
-                                " ${food['foodPrice'] ?? 0} VNĐ", // Giá món ăn từ MongoDB
+                                " ${(food['foodPrice'] ?? 0).toDouble().toStringAsFixed(0)} VNĐ", // Ép kiểu int sang double
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.red,
@@ -128,10 +134,32 @@ class NewestItemsWidget extends StatelessWidget {
                                 color: Colors.red,
                                 size: 26,
                               ),
-                              Icon(
-                                CupertinoIcons.cart,
-                                color: Colors.red,
-                                size: 26,
+                              IconButton(
+                                icon: Icon(
+                                  CupertinoIcons.cart,
+                                  color: Colors.red,
+                                  size: 26,
+                                ),
+                                onPressed: () {
+                                  // Khi nhấn vào giỏ hàng, thêm món vào giỏ hàng
+                                  CartItem newItem = CartItem(
+                                    foodName: food['foodName'],
+                                    foodImage: food['foodImage'],
+                                    price: (food['foodPrice'] ?? 0).toDouble(),
+                                    quantity: 1, // Thêm số lượng mặc định là 1
+                                  );
+
+                                  // Thêm món ăn vào giỏ hàng
+                                  cartService.addItem(newItem);
+
+                                  // Hiển thị thông báo cho người dùng
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "${food['foodName']} added to cart"),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),

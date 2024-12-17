@@ -3,12 +3,22 @@ import 'package:food_del/DB/MongoDB.dart';
 import 'package:food_del/Pages/HomePage.dart';
 import 'package:food_del/Pages/CartPage.dart';
 import 'package:food_del/Pages/ItemPage.dart';
-import 'package:food_del/Pages/LoginPage.dart'; // Import LoginPage
+import 'package:food_del/Pages/LoginPage.dart';
+import 'package:food_del/Pages/OrderConfirmationPage.dart';
+import 'package:food_del/Pages/OrderPage.dart';
+import 'package:provider/provider.dart'; // Import provider
+import 'package:food_del/Service/cart_service.dart'; // Import CartService
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MongoDatabase.connect();
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider<CartService>(
+      // Explicitly specify CartService
+      create: (context) => CartService(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -22,8 +32,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => Homepage(), // Trang chủ
         '/login': (context) => LoginPage(), // Màn hình đăng nhập
-        'cartPage': (context) => Cartpage(), // Trang giỏ hàng
+        '/cart': (context) => CartPage(), // Trang giỏ hàng
         'itemPage': (context) => ItemPage(), // Trang chi tiết món ăn
+        '/order_confirmation': (context) => OrderConfirmationPage(),
+        '/order_page': (context) => OrderPage(),
       },
     );
   }
