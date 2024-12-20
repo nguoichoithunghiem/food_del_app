@@ -121,4 +121,48 @@ class AuthService {
   static bool _checkPassword(String enteredPassword, String storedPassword) {
     return _hashPassword(enteredPassword) == storedPassword;
   }
+
+  // Lấy thông tin người dùng theo userId
+  static Future<User?> getUserInfo(String userId) async {
+    try {
+      // Tìm người dùng theo userId trong cơ sở dữ liệu
+      final userMap = await MongoDatabase.usersCollection!
+          .findOne(where.eq('_id', ObjectId.fromHexString(userId)));
+
+      if (userMap != null) {
+        // Chuyển đổi từ Map sang đối tượng User
+        User user = User.fromMap(userMap);
+
+        // Chuyển _id từ MongoDB thành chuỗi ID
+        user.userId = userMap['_id'].toHexString();
+
+        return user; // Trả về đối tượng User
+      } else {
+        print("User not found.");
+        return null; // Nếu không tìm thấy người dùng, trả về null
+      }
+    } catch (e) {
+      print("Error fetching user info: $e");
+      return null; // Xử lý lỗi nếu có
+    }
+  }
+
+  static Future<bool> updateUserInfo(
+      String userId, String userName, String phone, String address) async {
+    try {
+      // Cập nhật thông tin trong cơ sở dữ liệu (ví dụ MongoDB)
+      var result = await MongoDatabase.usersCollection!.updateOne(
+        where.eq('_id', ObjectId.fromHexString(userId)),
+        modify
+            .set('userName', userName)
+            .set('phone', phone)
+            .set('address', address),
+      );
+
+      return result.isAcknowledged;
+    } catch (e) {
+      print("Error during update user info: $e");
+      return false;
+    }
+  }
 }

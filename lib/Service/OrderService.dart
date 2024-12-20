@@ -10,26 +10,26 @@ class OrderService {
   OrderService({required this.cartService});
 
   // Tạo một Order mới từ giỏ hàng
-  Order createOrder(
-      {required User user,
-      required String userPhone,
-      required String userAddress,
-      required String note}) {
+  Order createOrder({
+    required User user,
+    required String userPhone,
+    required String userAddress,
+    required String note,
+  }) {
     String orderId = ObjectId()
         .toHexString(); // Tạo ID đơn hàng sử dụng ObjectId của MongoDB
     double totalPrice = cartService.getTotal();
 
-    // Tạo một Order mới từ thông tin giỏ hàng và thông tin người dùng
     Order order = Order(
-      orderId: orderId, // Gán orderId là ObjectId đã tạo
-      userId: user.userId, // Lấy userId từ đối tượng User
-      userName: user.userName, // Lấy userName từ đối tượng User
-      userPhone: userPhone, // Số điện thoại người dùng
-      userAddress: userAddress, // Địa chỉ người dùng
-      items: cartService.items, // Danh sách sản phẩm trong giỏ hàng
-      totalPrice: totalPrice, // Tổng giá trị đơn hàng
-      status: 'pending', // Trạng thái đơn hàng mặc định là "pending"
-      note: note, // Ghi chú về đơn hàng
+      orderId: orderId,
+      userId: user.userId,
+      userName: user.userName,
+      userPhone: userPhone,
+      userAddress: userAddress,
+      items: cartService.items,
+      totalPrice: totalPrice,
+      status: 'pending',
+      note: note,
     );
 
     return order;
@@ -38,5 +38,19 @@ class OrderService {
   // Lưu đơn hàng vào MongoDB
   Future<void> saveOrder(Order order) async {
     await MongoDatabase.saveOrder(order); // Lưu đơn hàng vào cơ sở dữ liệu
+  }
+
+  // Xem lịch sử đơn hàng của người dùng bằng userId
+  Future<List<Order>> getOrderHistory(String userId) async {
+    try {
+      var result = await MongoDatabase.ordersCollection
+          .find({'userId': userId}).toList(); // Truy vấn theo userId
+
+      // Chuyển đổi dữ liệu từ MongoDB thành danh sách Order
+      return result.map((orderData) => Order.fromMap(orderData)).toList();
+    } catch (e) {
+      print("Error fetching order history: $e");
+      return [];
+    }
   }
 }

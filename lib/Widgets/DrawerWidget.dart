@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:food_del/Pages/LoginPage.dart'; // Import LoginPage
+import 'package:food_del/Pages/OrderHistoryPage.dart'; // Import OrderHistoryPage
+import 'package:food_del/Pages/AccountPage.dart'; // Import AccountPage
 
 class DrawerWidget extends StatelessWidget {
   // Hàm đăng xuất
@@ -66,7 +68,17 @@ class DrawerWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            onTap: () {
+              // Điều hướng tới trang AccountPage khi bấm vào "My Account"
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AccountPage()), // Thay thế bằng AccountPage
+              );
+            },
           ),
+          // Cập nhật ListTile cho "My Orders"
           ListTile(
             leading: Icon(
               CupertinoIcons.cart,
@@ -79,6 +91,10 @@ class DrawerWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            onTap: () {
+              // Điều hướng tới trang OrderHistoryPage khi bấm vào "My Orders"
+              Navigator.pushNamed(context, '/order_history');
+            },
           ),
           ListTile(
             leading: Icon(

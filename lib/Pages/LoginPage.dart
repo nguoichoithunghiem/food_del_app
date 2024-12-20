@@ -55,56 +55,154 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Đăng nhập')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
-                onChanged: (value) => email = value,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập email';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Mật khẩu'),
-                obscureText: true,
-                onChanged: (value) => password = value,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập mật khẩu';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              isLoading
-                  ? CircularProgressIndicator() // Hiển thị loading khi đang đăng nhập
-                  : ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          login();
-                        }
-                      },
-                      child: Text('Đăng nhập'),
+      body: Container(
+        // Đổi nền thành màu đỏ cam
+        decoration: BoxDecoration(
+          color: Color(0xFFFF5722), // Màu đỏ cam (HEX: #FF5722)
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20), // Thêm padding cho SingleChildScrollView
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Tiêu đề trang đăng nhập với padding top 100
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 80), // Thêm padding top cho tiêu đề
+                  child: Text(
+                    'Đăng nhập vào tài khoản của bạn',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-              TextButton(
-                onPressed: () {
-                  // Chuyển đến màn hình đăng ký
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignUpPage()),
-                  );
-                },
-                child: Text('Chưa có tài khoản? Đăng ký ngay'),
-              ),
-            ],
+                  ),
+                ),
+                SizedBox(height: 30),
+
+                // Form đăng nhập
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          // Nhập email
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              prefixIcon: Icon(Icons.email),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            onChanged: (value) => email = value,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Vui lòng nhập email';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
+
+                          // Nhập mật khẩu
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Mật khẩu',
+                              prefixIcon: Icon(Icons.lock),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            obscureText: true,
+                            onChanged: (value) => password = value,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Vui lòng nhập mật khẩu';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
+
+                          // Button đăng nhập
+                          isLoading
+                              ? CircularProgressIndicator() // Hiển thị loading khi đang đăng nhập
+                              : ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      login();
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 16, horizontal: 32),
+                                    backgroundColor:
+                                        Color(0xFFFF5722), // Màu sắc của nút
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Đăng nhập',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                          SizedBox(height: 10),
+
+                          // Link đăng ký
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignUpPage()),
+                              );
+                            },
+                            child: Text(
+                              'Chưa có tài khoản? Đăng ký ngay',
+                              style: TextStyle(
+                                color: Color(0xFFFF5722), // Màu của TextButton
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                    height: 20), // Khoảng cách giữa form và văn bản bên dưới
+
+                // Thêm Text dưới cùng
+                Text(
+                  '',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 100), // Thêm padding bottom cho chữ OK
+                ),
+              ],
+            ),
           ),
         ),
       ),
