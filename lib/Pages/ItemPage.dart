@@ -69,7 +69,7 @@ class _ItemPageState extends State<ItemPage> {
                               onRatingUpdate: (rating) {},
                             ),
                             Text(
-                              "\$${food['foodPrice'] ?? 0}",
+                              "${food['foodPrice'] ?? 0} VND",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -83,15 +83,22 @@ class _ItemPageState extends State<ItemPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              food['foodName'] ?? "No name",
-                              style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
+                            // Đặt Text tên món ăn vào Expanded để nó có thể xuống dòng mà không đẩy nút
+                            Expanded(
+                              child: Text(
+                                food['foodName'] ?? "No name",
+                                style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow
+                                      .ellipsis, // Tránh tên quá dài gây tràn
+                                ),
+                                softWrap: true, // Cho phép tự động xuống dòng
                               ),
                             ),
+                            // Container chứa nút tăng giảm số lượng
                             Container(
-                              width: 120,
+                              width: 130,
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                 color: Colors.red,
@@ -105,7 +112,7 @@ class _ItemPageState extends State<ItemPage> {
                                     icon: Icon(
                                       CupertinoIcons.minus,
                                       color: Colors.white,
-                                      size: 20,
+                                      size: 16, // Giảm kích thước nút 20%
                                     ),
                                     onPressed: () {
                                       setState(() {
@@ -125,7 +132,7 @@ class _ItemPageState extends State<ItemPage> {
                                     icon: Icon(
                                       CupertinoIcons.add,
                                       color: Colors.white,
-                                      size: 20,
+                                      size: 16, // Giảm kích thước nút 20%
                                     ),
                                     onPressed: () {
                                       setState(() {

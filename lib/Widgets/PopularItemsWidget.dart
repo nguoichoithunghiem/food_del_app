@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:food_del/Service/FoodService.dart';
+import 'package:food_del/Service/WishlistService.dart'; // Import WishlistService
+import 'package:food_del/Service/AuthService.dart'; // Import AuthService
+import 'package:provider/provider.dart'; // Import Provider
 
-class PopularItemsWidget extends StatelessWidget {
+class PopularItemsWidget extends StatefulWidget {
+  @override
+  _PopularItemsWidgetState createState() => _PopularItemsWidgetState();
+}
+
+class _PopularItemsWidgetState extends State<PopularItemsWidget> {
+  // Trạng thái lưu thông tin món ăn đã được thêm vào wishlist
+  Map<String, bool> _wishlistStatus = {};
+
   @override
   Widget build(BuildContext context) {
+    // Lấy WishlistService từ Provider
+    final wishlistService =
+        WishlistService(); // Tạo instance của WishlistService
+
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: FoodService.getFoods(), // Gọi phương thức lấy dữ liệu món ăn
       builder: (context, snapshot) {
@@ -26,17 +41,25 @@ class PopularItemsWidget extends StatelessWidget {
         List<Map<String, dynamic>> foods =
             snapshot.data!; // Lấy danh sách món ăn
 
+        // Lấy userId từ AuthService (người dùng hiện tại)
+        final currentUser = AuthService.currentUser;
+        final userId = currentUser?.userId;
+
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
             child: Row(
               children: foods.map((food) {
+                // Kiểm tra xem món ăn đã có trong wishlist chưa
+                bool isInWishlist =
+                    _wishlistStatus[food['_id'].toString()] ?? false;
+
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 7),
                   child: Container(
-                    width: 170,
-                    height: 225,
+                    width: 180,
+                    height: 250,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -78,7 +101,7 @@ class PopularItemsWidget extends StatelessWidget {
                           Text(
                             food['foodName'] ?? "No name", // Tên món ăn
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 14, // Reduced by 30%
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -86,7 +109,7 @@ class PopularItemsWidget extends StatelessWidget {
                           Text(
                             food['foodTitle'] ?? "No Title", // Mô tả món ăn
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 10, // Reduced by 30%
                             ),
                           ),
                           SizedBox(height: 12),
@@ -96,15 +119,65 @@ class PopularItemsWidget extends StatelessWidget {
                               Text(
                                 "${food['foodPrice'] ?? 0} VNĐ", // Giá món ăn
                                 style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 12, // Reduced by 30%
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Icon(
-                                Icons.favorite_border,
-                                color: Colors.red,
-                                size: 26,
+                              IconButton(
+                                icon: Icon(
+                                  isInWishlist
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: Colors.red,
+                                  size: 26,
+                                ),
+                                onPressed: () {
+                                  if (userId != null) {
+                                    if (isInWishlist) {
+                                      // Nếu món ăn đã có trong wishlist, bỏ vào wishlist
+                                      wishlistService.removeFromWishlist(
+                                          userId, food['_id'].toString());
+
+                                      setState(() {
+                                        _wishlistStatus[
+                                            food['_id'].toString()] = false;
+                                      });
+
+                                      // Hiển thị thông báo
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "${food['foodName']} removed from wishlist"),
+                                        ),
+                                      );
+                                    } else {
+                                      // Thêm món vào wishlist
+                                      wishlistService.addToWishlist(
+                                        userId,
+                                        food['_id'].toString(),
+                                        food['foodName'],
+                                        food['foodImage'],
+                                        (food['foodPrice'] ?? 0).toDouble(),
+                                      );
+
+                                      setState(() {
+                                        _wishlistStatus[
+                                            food['_id'].toString()] = true;
+                                      });
+
+                                      // Hiển thị thông báo
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "${food['foodName']} added to wishlist"),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
                               ),
                             ],
                           ),

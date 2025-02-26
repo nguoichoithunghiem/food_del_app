@@ -51,7 +51,7 @@ class _HomepageState extends State<Homepage> {
           // Custom App Bar Widget
           Appbarwidget(),
 
-          // Search
+          // Tìm kiếm
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             child: Container(
@@ -90,7 +90,7 @@ class _HomepageState extends State<Homepage> {
                             _searchFoods(); // Gọi hàm tìm kiếm khi người dùng nhập
                           },
                           decoration: InputDecoration(
-                            hintText: "What would you like to have?",
+                            hintText: "Bạn muốn ăn gì?",
                             border: InputBorder.none,
                           ),
                         ),
@@ -125,7 +125,7 @@ class _HomepageState extends State<Homepage> {
                       padding: EdgeInsets.symmetric(horizontal: 7),
                       child: Container(
                         width: 170,
-                        height: 225,
+                        height: 250,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
@@ -165,17 +165,17 @@ class _HomepageState extends State<Homepage> {
                                 ),
                               ),
                               Text(
-                                food['foodName'] ?? "No name",
+                                food['foodName'] ?? "Không có tên",
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 12, // Giảm kích thước chữ xuống 20%
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               SizedBox(height: 4),
                               Text(
-                                food['foodTitle'] ?? "No Title",
+                                food['foodTitle'] ?? "Không có tiêu đề",
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 9,
                                 ),
                               ),
                               SizedBox(height: 12),
@@ -208,7 +208,7 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
 
-          // Category
+          // Danh mục
           Padding(
             padding: EdgeInsets.only(top: 20, left: 10),
             child: Text(
@@ -241,7 +241,7 @@ class _HomepageState extends State<Homepage> {
                       padding: EdgeInsets.symmetric(horizontal: 7),
                       child: Container(
                         width: 170,
-                        height: 225,
+                        height: 250,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
@@ -281,17 +281,17 @@ class _HomepageState extends State<Homepage> {
                                 ),
                               ),
                               Text(
-                                food['foodName'] ?? "No name",
+                                food['foodName'] ?? "Không có tên",
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 12, // Giảm kích thước chữ xuống 20%
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               SizedBox(height: 4),
                               Text(
-                                food['foodTitle'] ?? "No Title",
+                                food['foodTitle'] ?? "Không có tiêu đề",
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 9,
                                 ),
                               ),
                               SizedBox(height: 12),
@@ -324,21 +324,21 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
 
-          // Popular Items
+          // Món ăn phổ biến
           Padding(
             padding: EdgeInsets.only(top: 20, left: 10),
             child: Text(
-              "Popular",
+              "Món ăn phổ biến",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
           PopularItemsWidget(),
 
-          // Newest Items
+          // Món ăn mới nhất
           Padding(
             padding: EdgeInsets.only(top: 20, left: 10),
             child: Text(
-              "Newest",
+              "Món ăn mới nhất",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),

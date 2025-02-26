@@ -7,3 +7,4 @@ const COLLECTION_ORDER = "orders";
 const COLLECTION_ORDERDETAIL = "orderdetails";
 const COLLECTION_REVIEW = "reviews";
 const COLLECTION_COUPON = "coupons";
+const COLLECTION_WISHLIST = "wishlists";

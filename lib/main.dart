@@ -8,6 +8,7 @@ import 'package:food_del/Pages/LoginPage.dart';
 import 'package:food_del/Pages/OrderConfirmationPage.dart';
 import 'package:food_del/Pages/OrderHistoryPage.dart';
 import 'package:food_del/Pages/OrderPage.dart';
+import 'package:food_del/Pages/splashscreen.dart';
 import 'package:provider/provider.dart'; // Import provider
 import 'package:food_del/Service/cart_service.dart'; // Import CartService
 import 'package:food_del/Service/OrderService.dart'; // Import OrderService
@@ -39,7 +40,8 @@ class MyApp extends StatelessWidget {
       title: "Food App",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: Color(0xFFF5F5F3)),
-      initialRoute: '/login', // Đặt trang login là màn hình đầu tiên khi mở app
+      initialRoute:
+          '/splash', // Đặt trang login là màn hình đầu tiên khi mở app
       routes: {
         '/': (context) => Homepage(), // Trang chủ
         '/login': (context) => LoginPage(), // Màn hình đăng nhập
@@ -49,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/order_page': (context) => OrderPage(),
         '/order_history': (context) => OrderHistoryPage(),
         '/account': (context) => AccountPage(), // Trang lịch sử đơn hàng
+        '/splash': (context) => SplashScreen(),
       },
     );
   }

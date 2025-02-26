@@ -1,18 +1,17 @@
+// orderModel.dart
 import 'package:food_del/Models/cart_item.dart';
 
 class Order {
-  final String orderId;
-  final String userId; // ID của người dùng
-  final String userName; // Tên người dùng
-  final String userPhone; // Số điện thoại người dùng
-  final String userAddress; // Địa chỉ người dùng
-  final List<CartItem> items; // Danh sách sản phẩm trong giỏ hàng
-  final double totalPrice; // Tổng giá trị đơn hàng
-  final String
-      status; // Trạng thái đơn hàng: "pending", "confirmed", "shipping", "completed", "cancelled"
-  final String note; // Ghi chú về đơn hàng
+  String orderId;
+  String userId;
+  String userName;
+  String userPhone;
+  String userAddress;
+  List<CartItem> items;
+  double totalPrice; // Đổi từ final thành bình thường
+  String status;
+  String note;
 
-  // Constructor để khởi tạo đơn hàng
   Order({
     required this.orderId,
     required this.userId,
@@ -25,7 +24,22 @@ class Order {
     required this.note,
   });
 
-  // Phương thức chuyển Order thành Map để lưu trữ vào MongoDB hoặc gửi qua API
+  // Phương thức khởi tạo từ Map
+  factory Order.fromMap(Map<String, dynamic> map) {
+    return Order(
+      orderId: map['orderId'],
+      userId: map['userId'],
+      userName: map['userName'],
+      userPhone: map['userPhone'],
+      userAddress: map['userAddress'],
+      items: List<CartItem>.from(
+          map['items'].map((item) => CartItem.fromMap(item))),
+      totalPrice: map['totalPrice'],
+      status: map['status'],
+      note: map['note'],
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'orderId': orderId,
@@ -33,28 +47,10 @@ class Order {
       'userName': userName,
       'userPhone': userPhone,
       'userAddress': userAddress,
-      'items': items
-          .map((item) => item.toMap())
-          .toList(), // Chuyển các CartItem thành Map
+      'items': items.map((item) => item.toMap()).toList(),
       'totalPrice': totalPrice,
       'status': status,
       'note': note,
     };
-  }
-
-  // Tạo Order từ Map khi nhận dữ liệu từ MongoDB hoặc API
-  factory Order.fromMap(Map<String, dynamic> map) {
-    return Order(
-      orderId: map['orderId'] ?? '',
-      userId: map['userId'] ?? '',
-      userName: map['userName'] ?? '',
-      userPhone: map['userPhone'] ?? '',
-      userAddress: map['userAddress'] ?? '',
-      items: List<CartItem>.from(
-          map['items']?.map((item) => CartItem.fromMap(item)) ?? []),
-      totalPrice: map['totalPrice']?.toDouble() ?? 0.0,
-      status: map['status'] ?? 'pending',
-      note: map['note'] ?? '',
-    );
   }
 }

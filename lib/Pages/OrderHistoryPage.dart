@@ -12,10 +12,10 @@ class OrderHistoryPage extends StatelessWidget {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Order History'),
+          title: Text('Lịch sử đơn hàng'),
           backgroundColor: Colors.red, // Màu sắc AppBar
         ),
-        body: Center(child: Text("User information is missing!")),
+        body: Center(child: Text("Thông tin người dùng không có!")),
       );
     }
 
@@ -23,7 +23,7 @@ class OrderHistoryPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order History'),
+        title: Text('Lịch sử đơn hàng'),
         backgroundColor: Colors.red, // Màu sắc AppBar
       ),
       body: FutureBuilder<List<Order>>(
@@ -34,11 +34,11 @@ class OrderHistoryPage extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text("There was an error loading orders."));
+            return Center(child: Text("Đã có lỗi xảy ra khi tải đơn hàng."));
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("No orders found."));
+            return Center(child: Text("Không có đơn hàng nào."));
           }
 
           // Lấy danh sách đơn hàng và sắp xếp theo orderId (càng lớn thì đơn hàng càng mới)
@@ -78,28 +78,28 @@ class OrderCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Order ID: ${order.orderId}",
+              "Mã đơn hàng: ${order.orderId}",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   color: Colors.black87),
             ),
             SizedBox(height: 8),
-            Text("Status: ${order.status}",
+            Text("Trạng thái: ${order.status}",
                 style: TextStyle(fontSize: 14, color: Colors.green)),
-            Text("Total Price: ${order.totalPrice} VND",
+            Text("Tổng giá: ${order.totalPrice} VND",
                 style: TextStyle(fontSize: 14, color: Colors.black87)),
             SizedBox(height: 8),
-            Text("Delivery Address: ${order.userAddress}",
+            Text("Địa chỉ giao hàng: ${order.userAddress}",
                 style: TextStyle(fontSize: 14, color: Colors.black54)),
-            Text("Phone: ${order.userPhone}",
+            Text("Số điện thoại: ${order.userPhone}",
                 style: TextStyle(fontSize: 14, color: Colors.black54)),
             SizedBox(height: 8),
-            Text("Note: ${order.note}",
+            Text("Ghi chú: ${order.note}",
                 style: TextStyle(fontSize: 14, color: Colors.black54)),
             SizedBox(height: 8),
             Divider(),
-            Text("Items:",
+            Text("Món ăn:",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -109,7 +109,7 @@ class OrderCard extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.fastfood, color: Colors.red),
                 title: Text(item.foodName, style: TextStyle(fontSize: 14)),
-                subtitle: Text("Price: ${item.price} VND x ${item.quantity}",
+                subtitle: Text("Giá: ${item.price} VND x ${item.quantity}",
                     style: TextStyle(fontSize: 12, color: Colors.black54)),
               );
             }).toList(),

@@ -54,12 +54,12 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
       if (isUpdated) {
         // Nếu cập nhật thành công, thông báo và trở về trang AccountPage
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Information updated successfully")));
+            SnackBar(content: Text("Cập nhật thông tin thành công")));
         Navigator.pop(context); // Quay lại trang AccountPage
       } else {
         // Nếu có lỗi trong quá trình cập nhật
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to update information")));
+            SnackBar(content: Text("Cập nhật thông tin thất bại")));
       }
     }
   }
@@ -68,7 +68,8 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Information'),
+        title: Text('Cập nhật thông tin',
+            style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
       ),
       body: Padding(
@@ -78,51 +79,97 @@ class _UpdateAccountPageState extends State<UpdateAccountPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
+              // Tên người dùng
+              _buildTextField(
                 controller: _userNameController,
-                decoration: InputDecoration(labelText: "Username"),
+                label: "Tên người dùng",
+                icon: Icons.person,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your username';
+                    return 'Vui lòng nhập tên người dùng';
                   }
                   return null;
                 },
               ),
-              TextFormField(
+              SizedBox(height: 16),
+
+              // Số điện thoại
+              _buildTextField(
                 controller: _phoneController,
-                decoration: InputDecoration(labelText: "Phone"),
+                label: "Số điện thoại",
+                icon: Icons.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
+                    return 'Vui lòng nhập số điện thoại';
                   }
                   return null;
                 },
               ),
-              TextFormField(
+              SizedBox(height: 16),
+
+              // Địa chỉ
+              _buildTextField(
                 controller: _addressController,
-                decoration: InputDecoration(labelText: "Address"),
+                label: "Địa chỉ",
+                icon: Icons.location_on,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your address';
+                    return 'Vui lòng nhập địa chỉ';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 20),
+
+              // Nút Cập nhật thông tin
               ElevatedButton(
                 onPressed: _updateUserInfo,
                 child: Text("Cập nhật thông tin"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
+                  foregroundColor:
+                      Colors.white, // Thêm dòng này để đặt màu chữ là trắng
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   textStyle:
                       TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
+              )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  // Widget tùy chỉnh cho các trường nhập liệu
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    required String? Function(String?) validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Colors.red), // Icon phía trước
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red), // Viền trường nhập liệu
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey, width: 1),
+        ),
+      ),
+      validator: validator,
     );
   }
 }

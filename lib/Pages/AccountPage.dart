@@ -35,8 +35,11 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Account Information'),
+        title: Text('Thông tin tài khoản',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.red,
+        elevation: 10,
+        centerTitle: true,
       ),
       body: _user == null
           ? Center(
@@ -48,16 +51,18 @@ class _AccountPageState extends State<AccountPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildInfoCard("User ID", _user!.userId),
+                    _buildHeader(), // Thêm ảnh đại diện người dùng hoặc icon
+                    SizedBox(height: 20),
+                    _buildInfoCard("Mã người dùng", _user!.userId),
                     _buildInfoCard("Email", _user!.email),
-                    _buildInfoCard("Username", _user!.userName),
-                    _buildInfoCard("Phone", _user!.phone),
-                    _buildInfoCard("Address", _user!.address),
-                    _buildInfoCard("Role", _user!.role),
-                    SizedBox(height: 16),
+                    _buildInfoCard("Tên người dùng", _user!.userName),
+                    _buildInfoCard("Số điện thoại", _user!.phone),
+                    _buildInfoCard("Địa chỉ", _user!.address),
+                    _buildInfoCard("Vai trò", _user!.role),
+                    SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        // Khi người dùng nhấn vào "Update", chuyển hướng đến trang cập nhật
+                        // Khi người dùng nhấn vào "Cập nhật", chuyển hướng đến trang cập nhật
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -66,15 +71,21 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                         );
                       },
-                      child: Text("Cập nhật thông tin"),
+                      child: Text(
+                        "Cập nhật thông tin",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Đảm bảo chữ có màu đen
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         padding:
                             EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                        textStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ],
@@ -84,22 +95,46 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
+  // Header with avatar and user name
+  Widget _buildHeader() {
+    return Center(
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: AssetImage("images/avatar.jpg"),
+          ),
+          SizedBox(height: 10),
+          Text(
+            _user?.userName ?? "Tên người dùng",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Thẻ thông tin người dùng
   Widget _buildInfoCard(String title, String value) {
     return Card(
-      elevation: 5,
-      margin: EdgeInsets.only(bottom: 10),
+      elevation: 8,
+      margin: EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(15),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.red,
               ),
@@ -107,7 +142,7 @@ class _AccountPageState extends State<AccountPage> {
             Flexible(
               child: Text(
                 value,
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Colors.black),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),

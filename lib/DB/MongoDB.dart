@@ -1,7 +1,7 @@
 import 'package:food_del/DB/Constant.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:food_del/Models/orderModel.dart';
-import 'package:food_del/Models/cart_item.dart'; // Đảm bảo import model CartItem
+import 'package:food_del/Models/WishlistItem.dart'; // Import WishlistItem model
 
 class MongoDatabase {
   static Db? _db;
@@ -10,6 +10,8 @@ class MongoDatabase {
   static DbCollection? _categoriesCollection;
   static DbCollection? _ordersCollection;
   static DbCollection? _orderDetailsCollection;
+  static DbCollection? _wishlistsCollection; // Thêm collection wishlists
+  static DbCollection? _couponsCollection; // Thêm collection coupons
 
   // Kết nối MongoDB
   static Future<Db> connect() async {
@@ -21,7 +23,7 @@ class MongoDatabase {
     return _db!;
   }
 
-  // Getter cho usersCollection
+  // Getter cho các collections
   static DbCollection get usersCollection {
     if (_db == null) {
       throw Exception(
@@ -31,7 +33,6 @@ class MongoDatabase {
     return _usersCollection!;
   }
 
-  // Getter cho foodsCollection
   static DbCollection get foodsCollection {
     if (_db == null) {
       throw Exception(
@@ -41,7 +42,6 @@ class MongoDatabase {
     return _foodsCollection!;
   }
 
-  // Getter cho categoriesCollection
   static DbCollection get categoriesCollection {
     if (_db == null) {
       throw Exception(
@@ -51,7 +51,6 @@ class MongoDatabase {
     return _categoriesCollection!;
   }
 
-  // Getter cho ordersCollection
   static DbCollection get ordersCollection {
     if (_db == null) {
       throw Exception(
@@ -61,7 +60,6 @@ class MongoDatabase {
     return _ordersCollection!;
   }
 
-  // Getter cho orderDetailsCollection
   static DbCollection get orderDetailsCollection {
     if (_db == null) {
       throw Exception(
@@ -69,6 +67,44 @@ class MongoDatabase {
     }
     _orderDetailsCollection ??= _db!.collection(COLLECTION_ORDERDETAIL);
     return _orderDetailsCollection!;
+  }
+
+  static DbCollection get wishlistsCollection {
+    if (_db == null) {
+      throw Exception(
+          "Database not connected. Please call MongoDatabase.connect() first.");
+    }
+    _wishlistsCollection ??= _db!.collection(COLLECTION_WISHLIST);
+    return _wishlistsCollection!;
+  }
+
+  static DbCollection get couponsCollection {
+    if (_db == null) {
+      throw Exception(
+          "Database not connected. Please call MongoDatabase.connect() first.");
+    }
+    _couponsCollection ??= _db!.collection(
+        COLLECTION_COUPON); // COLLECTION_COUPONS là tên collection coupon trong MongoDB
+    return _couponsCollection!;
+  }
+
+  // Kiểm tra mã giảm giá hợp lệ
+  static Future<Map<String, dynamic>?> checkCoupon(String code) async {
+    try {
+      var result = await couponsCollection.findOne({
+        'code': code,
+        'active': true, // Kiểm tra mã giảm giá còn hoạt động hay không
+        'expiryDate': {
+          '\$gte': DateTime.now()
+              .toIso8601String(), // Kiểm tra mã giảm giá chưa hết hạn
+        }
+      });
+
+      return result; // Nếu có coupon hợp lệ, trả về thông tin coupon
+    } catch (e) {
+      print("Error checking coupon: $e");
+      return null;
+    }
   }
 
   // Lưu đơn hàng vào MongoDB
@@ -91,6 +127,66 @@ class MongoDatabase {
       }
     } catch (e) {
       print("Error saving order: $e");
+    }
+  }
+
+  // Thêm món ăn vào wishlist
+  static Future<void> addToWishlist(String userId, String foodId,
+      String foodName, String foodImage, double foodPrice) async {
+    try {
+      var wishlistItem = WishlistItem(
+        userId: userId,
+        foodId: foodId,
+        foodName: foodName,
+        foodImage: foodImage,
+        foodPrice: foodPrice,
+      );
+
+      // Kiểm tra xem món ăn đã có trong wishlist của người dùng chưa
+      var existingItem = await wishlistsCollection.findOne({
+        'userId': userId,
+        'foodId': foodId,
+      });
+
+      if (existingItem == null) {
+        // Nếu chưa có, thêm vào wishlist
+        await wishlistsCollection.insertOne(wishlistItem.toMap());
+        print("Added to wishlist");
+      } else {
+        print("Item already in wishlist");
+      }
+    } catch (e) {
+      print("Error adding to wishlist: $e");
+    }
+  }
+
+  // Lấy danh sách wishlist của người dùng
+  static Future<List<WishlistItem>> getWishlist(String userId) async {
+    try {
+      var result = await wishlistsCollection.find({'userId': userId}).toList();
+      return result.map((item) => WishlistItem.fromMap(item)).toList();
+    } catch (e) {
+      print("Error getting wishlist: $e");
+      return [];
+    }
+  }
+
+  // Xóa món ăn khỏi wishlist
+  static Future<void> removeFromWishlist(String userId, String foodId) async {
+    try {
+      // Tìm và xóa món ăn khỏi wishlist của người dùng dựa trên userId và foodId
+      var result = await wishlistsCollection.deleteOne({
+        'userId': userId,
+        'foodId': foodId,
+      });
+
+      if (result.isAcknowledged) {
+        print("Item removed from wishlist");
+      } else {
+        print("Item not found in wishlist");
+      }
+    } catch (e) {
+      print("Error removing from wishlist: $e");
     }
   }
 }

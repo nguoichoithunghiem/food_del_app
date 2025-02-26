@@ -4,40 +4,61 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_del/Models/cart_item.dart';
 import 'package:food_del/Service/FoodService.dart';
 import 'package:food_del/Service/cart_service.dart'; // Import CartService
+import 'package:food_del/Service/WishlistService.dart'; // Import WishlistService
+import 'package:food_del/Service/AuthService.dart'; // Import AuthService
 import 'package:provider/provider.dart'; // Import Provider
 
-class NewestItemsWidget extends StatelessWidget {
+class NewestItemsWidget extends StatefulWidget {
+  @override
+  _NewestItemsWidgetState createState() => _NewestItemsWidgetState();
+}
+
+class _NewestItemsWidgetState extends State<NewestItemsWidget> {
+  // Trạng thái lưu thông tin món ăn đã được thêm vào wishlist
+  Map<String, bool> _wishlistStatus = {};
+
   @override
   Widget build(BuildContext context) {
-    // Lấy CartService từ Provider
+    // Lấy CartService và WishlistService từ Provider
     final cartService = Provider.of<CartService>(context);
+    final wishlistService =
+        WishlistService(); // Tạo instance của WishlistService
 
     return FutureBuilder<List<Map<String, dynamic>>>(
-      // Lấy danh sách món ăn từ FoodService
       future: FoodService.getFoods(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-              child: CircularProgressIndicator()); // Hiển thị khi đang tải
+          return Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          return Center(
-              child: Text("Error: ${snapshot.error}")); // Hiển thị lỗi nếu có
+          return Center(child: Text("Error: ${snapshot.error}"));
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(
-              child: Text("No items found")); // Nếu không có món ăn nào
+          return Center(child: Text("No items found"));
         }
 
-        List<Map<String, dynamic>> foods = snapshot.data!; // Danh sách món ăn
+        // Lấy danh sách món ăn và giới hạn chỉ 10 món
+        List<Map<String, dynamic>> foods = snapshot.data!;
+        List<Map<String, dynamic>> limitedFoods =
+            foods.take(10).toList(); // Lấy 10 món ăn đầu tiên
+
+        // Đảo ngược danh sách để hiển thị từ dưới lên
+        List<Map<String, dynamic>> reversedFoods =
+            limitedFoods.reversed.toList();
+
+        final currentUser = AuthService.currentUser;
+        final userId = currentUser?.userId;
 
         return SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             child: Column(
-              children: foods.map((food) {
+              children: reversedFoods.map((food) {
+                bool isInWishlist =
+                    _wishlistStatus[food['_id'].toString()] ?? false;
+
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Container(
@@ -60,11 +81,10 @@ class NewestItemsWidget extends StatelessWidget {
                         // Hình ảnh món ăn
                         InkWell(
                           onTap: () {
-                            // Điều hướng đến trang chi tiết món ăn và truyền dữ liệu
                             Navigator.pushNamed(
                               context,
                               "itemPage",
-                              arguments: food, // Truyền dữ liệu món ăn
+                              arguments: food,
                             );
                           },
                           child: Container(
@@ -84,23 +104,21 @@ class NewestItemsWidget extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(
-                                food['foodName'] ??
-                                    "No name", // Tên món ăn từ MongoDB
+                                food['foodName'] ?? "No name",
                                 style: TextStyle(
-                                  fontSize: 22,
+                                  fontSize: 15, // Reduced by 30% from 22
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
-                                food['foodDescription'] ??
-                                    "No description", // Mô tả món ăn từ MongoDB
+                                food['foodDescription'] ?? "No description",
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 11, // Reduced by 30% from 16
                                 ),
                               ),
                               RatingBar.builder(
-                                initialRating: food['foodRating']?.toDouble() ??
-                                    4.0, // Đánh giá món ăn
+                                initialRating:
+                                    food['foodRating']?.toDouble() ?? 4.0,
                                 minRating: 1,
                                 direction: Axis.horizontal,
                                 itemCount: 5,
@@ -114,9 +132,9 @@ class NewestItemsWidget extends StatelessWidget {
                                 onRatingUpdate: (rating) {},
                               ),
                               Text(
-                                " ${(food['foodPrice'] ?? 0).toDouble().toStringAsFixed(0)} VNĐ", // Ép kiểu int sang double
+                                " ${(food['foodPrice'] ?? 0).toDouble().toStringAsFixed(0)} VNĐ",
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 14, // Reduced by 30% from 20
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -129,11 +147,6 @@ class NewestItemsWidget extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Icon(
-                                Icons.favorite_border,
-                                color: Colors.red,
-                                size: 26,
-                              ),
                               IconButton(
                                 icon: Icon(
                                   CupertinoIcons.cart,
@@ -141,24 +154,72 @@ class NewestItemsWidget extends StatelessWidget {
                                   size: 26,
                                 ),
                                 onPressed: () {
-                                  // Khi nhấn vào giỏ hàng, thêm món vào giỏ hàng
                                   CartItem newItem = CartItem(
                                     foodName: food['foodName'],
                                     foodImage: food['foodImage'],
                                     price: (food['foodPrice'] ?? 0).toDouble(),
-                                    quantity: 1, // Thêm số lượng mặc định là 1
+                                    quantity: 1,
                                   );
 
-                                  // Thêm món ăn vào giỏ hàng
                                   cartService.addItem(newItem);
 
-                                  // Hiển thị thông báo cho người dùng
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
                                           "${food['foodName']} added to cart"),
                                     ),
                                   );
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  isInWishlist
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: Colors.red,
+                                  size: 26,
+                                ),
+                                onPressed: () {
+                                  if (userId != null) {
+                                    if (isInWishlist) {
+                                      wishlistService.removeFromWishlist(
+                                          userId, food['_id'].toString());
+
+                                      setState(() {
+                                        _wishlistStatus[
+                                            food['_id'].toString()] = false;
+                                      });
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "${food['foodName']} removed from wishlist"),
+                                        ),
+                                      );
+                                    } else {
+                                      wishlistService.addToWishlist(
+                                        userId,
+                                        food['_id'].toString(),
+                                        food['foodName'],
+                                        food['foodImage'],
+                                        (food['foodPrice'] ?? 0).toDouble(),
+                                      );
+
+                                      setState(() {
+                                        _wishlistStatus[
+                                            food['_id'].toString()] = true;
+                                      });
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "${food['foodName']} added to wishlist"),
+                                        ),
+                                      );
+                                    }
+                                  }
                                 },
                               ),
                             ],

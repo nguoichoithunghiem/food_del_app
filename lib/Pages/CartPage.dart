@@ -16,10 +16,10 @@ class CartPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Your Cart"),
+        title: Text("Giỏ hàng của bạn"),
       ),
       body: cartService.items.isEmpty
-          ? Center(child: Text("Your cart is empty"))
+          ? Center(child: Text("Giỏ hàng của bạn hiện đang trống"))
           : ListView.builder(
               itemCount: cartService.items.length,
               itemBuilder: (context, index) {
@@ -70,7 +70,7 @@ class CartPage extends StatelessWidget {
                                   maxLines: 1,
                                 ),
                                 Text(
-                                  "Taste Our ${cartItem.foodName}",
+                                  "Thưởng thức ${cartItem.foodName}",
                                   style: TextStyle(fontSize: 14),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
