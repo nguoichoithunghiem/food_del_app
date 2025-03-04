@@ -1,24 +1,26 @@
 import 'package:food_del/DB/MongoDB.dart';
+import 'package:food_del/Models/ReviewModel.dart';
 import 'package:food_del/Models/orderModel.dart';
 import 'package:food_del/Models/userModel.dart';
 import 'package:food_del/Service/cart_service.dart';
-import 'package:mongo_dart/mongo_dart.dart'; // Import mongo_dart để sử dụng ObjectId
+import 'package:mongo_dart/mongo_dart.dart';
 
 class OrderService {
   final CartService cartService;
 
   OrderService({required this.cartService});
 
-  // Tạo một Order mới từ giỏ hàng
+  // Phương thức tạo một đơn hàng mới từ giỏ hàng
   Order createOrder({
     required User user,
     required String userPhone,
     required String userAddress,
     required String note,
   }) {
-    String orderId = ObjectId()
-        .toHexString(); // Tạo ID đơn hàng sử dụng ObjectId của MongoDB
-    double totalPrice = cartService.getTotal(); // Tính tổng tiền ban đầu
+    String orderId =
+        ObjectId().toHexString(); // Tạo ID đơn hàng sử dụng ObjectId
+    double totalPrice = cartService.getTotal(); // Tính tổng tiền
+    DateTime orderDate = DateTime.now(); // Lấy ngày hiện tại
 
     Order order = Order(
       orderId: orderId,
@@ -30,108 +32,173 @@ class OrderService {
       totalPrice: totalPrice,
       status: 'pending',
       note: note,
+      orderDate: orderDate,
     );
 
     return order;
   }
 
-  // Lưu đơn hàng vào MongoDB
+  // Phương thức lưu đơn hàng vào MongoDB
   Future<void> saveOrder(Order order) async {
     try {
-      // Lưu đơn hàng vào MongoDB
       await MongoDatabase.ordersCollection.insertOne(order.toMap());
-      print("Order saved successfully to MongoDB.");
+      print("Đơn hàng đã được lưu thành công vào MongoDB.");
     } catch (e) {
-      print("Error saving order: $e");
+      print("Lỗi khi lưu đơn hàng: $e");
     }
   }
 
-  // Xem lịch sử đơn hàng của người dùng bằng userId
+  // Phương thức lấy lịch sử đơn hàng của người dùng bằng userId
   Future<List<Order>> getOrderHistory(String userId) async {
     try {
       var result = await MongoDatabase.ordersCollection
-          .find({'userId': userId}).toList(); // Truy vấn theo userId
+          .find({'userId': userId}).toList();
 
-      // Chuyển đổi dữ liệu từ MongoDB thành danh sách Order
       return result.map((orderData) => Order.fromMap(orderData)).toList();
     } catch (e) {
-      print("Error fetching order history: $e");
+      print("Lỗi khi lấy lịch sử đơn hàng: $e");
       return [];
     }
   }
 
-  // Áp dụng mã giảm giá cho đơn hàng và tính lại tổng tiền
-  Future<double> applyCoupon(String couponCode) async {
+  // Phương thức hủy đơn hàng và cập nhật trạng thái thành 'canceled'
+  Future<void> cancelOrder(String orderId) async {
     try {
-      // Kiểm tra mã giảm giá trong MongoDB
-      var coupon = await MongoDatabase.couponsCollection.findOne(
-          {'code': couponCode, 'active': true}); // Tìm mã giảm giá hoạt động
+      var result =
+          await MongoDatabase.ordersCollection.findOne({'orderId': orderId});
 
-      if (coupon == null) {
-        print("Invalid or expired coupon.");
-        return 0.0; // Không có giảm giá
+      if (result == null) {
+        print("Không tìm thấy đơn hàng.");
+        return;
       }
 
-      // Lấy thời gian hết hạn của mã giảm giá từ MongoDB
+      // Cập nhật trạng thái của đơn hàng thành 'canceled'
+      var updatedOrder = {...result};
+      updatedOrder['status'] = 'canceled';
+
+      // Lưu lại đơn hàng đã cập nhật vào MongoDB
+      await MongoDatabase.ordersCollection.updateOne(
+        where.eq('orderId', orderId),
+        modify.set('status', 'canceled'),
+      );
+
+      print("Đơn hàng đã được hủy thành công.");
+    } catch (e) {
+      print("Lỗi khi hủy đơn hàng: $e");
+    }
+  }
+
+  // Phương thức áp dụng mã giảm giá cho đơn hàng và tính lại tổng tiền
+  Future<double> applyCoupon(String couponCode) async {
+    try {
+      var coupon = await MongoDatabase.couponsCollection
+          .findOne({'code': couponCode, 'active': true});
+
+      if (coupon == null) {
+        print("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+        return 0.0;
+      }
+
       DateTime expiryDate = coupon['expiryDate'] is DateTime
-          ? coupon['expiryDate'] // Nếu `expiryDate` đã là DateTime
-          : DateTime.parse(coupon['expiryDate']); // Nếu là chuỗi thì parse lại
+          ? coupon['expiryDate']
+          : DateTime.parse(coupon['expiryDate']);
 
       DateTime currentDate = DateTime.now();
 
-      // Kiểm tra xem mã giảm giá có hết hạn hay không
       if (expiryDate.isBefore(currentDate)) {
-        print("Coupon has expired.");
-        return 0.0; // Mã giảm giá đã hết hạn
+        print("Mã giảm giá đã hết hạn.");
+        return 0.0;
       }
 
-      // Lấy giá trị giảm giá và loại giảm giá từ coupon
       double discountValue = coupon['discountValue'].toDouble();
-      String discountType =
-          coupon['discountType']; // "percentage" hoặc "amount"
+      String discountType = coupon['discountType'];
 
       double discountAmount = 0.0;
 
-      // Áp dụng giảm giá theo phần trăm hoặc theo số tiền
       if (discountType == 'percentage') {
-        // Giảm giá theo phần trăm
         discountAmount = discountValue / 100;
       } else if (discountType == 'amount') {
-        // Giảm giá theo số tiền cố định
         discountAmount = discountValue;
       }
 
       return discountAmount;
     } catch (e) {
-      print("Error applying coupon: $e");
-      return 0.0; // Nếu có lỗi, không áp dụng giảm giá
+      print("Lỗi khi áp dụng mã giảm giá: $e");
+      return 0.0;
     }
   }
 
-  // Hàm tính lại tổng tiền sau khi áp dụng giảm giá
+  // Phương thức tính tổng tiền sau khi áp dụng giảm giá
   double applyDiscountToTotal(double totalPrice, double discountAmount) {
     if (discountAmount < 1) {
-      // Nếu là giảm giá phần trăm
-      return totalPrice * (1 - discountAmount); // Tính giảm giá phần trăm
+      return totalPrice * (1 - discountAmount);
     } else {
-      // Nếu là giảm giá số tiền cố định
-      return totalPrice - discountAmount; // Trừ trực tiếp số tiền cố định
+      return totalPrice - discountAmount;
     }
   }
 
-  // Cập nhật đơn hàng và lưu lại thông tin sau khi áp dụng mã giảm giá
+  // Phương thức cập nhật đơn hàng sau khi áp dụng giảm giá
   Future<void> updateOrderWithDiscount(Order order, String couponCode) async {
-    // Áp dụng mã giảm giá
     double discountAmount = await applyCoupon(couponCode);
 
-    // Cập nhật lại tổng tiền đơn hàng sau khi áp dụng giảm giá
     if (discountAmount > 0) {
       order.totalPrice = applyDiscountToTotal(order.totalPrice, discountAmount);
     }
 
-    // Lưu đơn hàng đã cập nhật vào MongoDB
     await saveOrder(order);
 
-    print("Order updated with discount and saved to MongoDB.");
+    print("Đơn hàng đã được cập nhật với giảm giá và lưu vào MongoDB.");
+  }
+
+  // Phương thức đánh giá món ăn
+  Future<void> addReview({
+    required String userId,
+    required String foodName,
+    required String userName,
+    required double rating,
+    required String comment,
+  }) async {
+    try {
+      // Kiểm tra nếu món ăn đã được đánh giá bởi người dùng này chưa
+      var existingReview = await MongoDatabase.reviewsCollection
+          .findOne({'userId': userId, 'foodName': foodName});
+
+      if (existingReview != null) {
+        print("Bạn đã đánh giá món ăn này rồi.");
+        return; // Nếu đã đánh giá, không cho phép thêm đánh giá nữa
+      }
+
+      String reviewId = ObjectId().toHexString(); // Tạo ID đánh giá
+      DateTime reviewDate = DateTime.now(); // Lấy thời gian hiện tại
+
+      Review review = Review(
+        reviewId: reviewId,
+        userId: userId,
+        foodName: foodName,
+        userName: userName,
+        rating: rating,
+        comment: comment,
+        reviewDate: reviewDate,
+      );
+
+      // Lưu đánh giá vào MongoDB
+      await MongoDatabase.saveReview(review);
+      print("Đánh giá đã được thêm thành công.");
+    } catch (e) {
+      print("Lỗi khi thêm đánh giá: $e");
+    }
+  }
+
+  // Phương thức lấy tất cả đánh giá của món ăn
+  Future<List<Review>> getReviews(String foodName) async {
+    try {
+      var result = await MongoDatabase.reviewsCollection
+          .find({'foodName': foodName}).toList();
+
+      return result.map((reviewData) => Review.fromMap(reviewData)).toList();
+    } catch (e) {
+      print("Lỗi khi lấy đánh giá món ăn: $e");
+      return [];
+    }
   }
 }

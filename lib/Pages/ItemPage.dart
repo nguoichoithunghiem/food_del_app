@@ -3,9 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_del/Models/cart_item.dart';
+import 'package:food_del/Service/OrderService.dart';
 import 'package:food_del/Widgets/AppBarWidget.dart';
 import 'package:food_del/Widgets/ItemBottomNavBar.dart';
 import 'package:food_del/Service/cart_service.dart'; // Import CartService
+import 'package:food_del/Models/ReviewModel.dart'; // Import ReviewModel
+import 'package:food_del/Widgets/DrawerWidget.dart'; // Import DrawerWidget
 import 'package:provider/provider.dart'; // Import Provider
 
 class ItemPage extends StatefulWidget {
@@ -15,6 +18,8 @@ class ItemPage extends StatefulWidget {
 
 class _ItemPageState extends State<ItemPage> {
   int _quantity = 1; // Biến lưu số lượng món ăn
+  double _rating = 0.0; // Biến lưu rating của người dùng
+  String _comment = ''; // Biến lưu bình luận của người dùng
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +29,11 @@ class _ItemPageState extends State<ItemPage> {
 
     // Lấy CartService từ Provider
     final cartService = Provider.of<CartService>(context);
+    final orderService =
+        Provider.of<OrderService>(context); // Lấy OrderService từ Provider
 
     return Scaffold(
+      drawer: DrawerWidget(), // Thêm DrawerWidget vào đây
       body: Padding(
         padding: EdgeInsets.only(top: 5),
         child: ListView(
@@ -160,7 +168,7 @@ class _ItemPageState extends State<ItemPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Delivery Time:",
+                              "vận chuyển:",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -177,7 +185,7 @@ class _ItemPageState extends State<ItemPage> {
                                   ),
                                 ),
                                 Text(
-                                  "30 Minutes",
+                                  "30 Phút",
                                   style: TextStyle(
                                     fontSize: 16,
                                   ),
@@ -187,6 +195,69 @@ class _ItemPageState extends State<ItemPage> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Đánh Giá Và Bình Luận",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ]),
+                      ),
+                      // Hiển thị đánh giá hiện có
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: FutureBuilder<List<Review>>(
+                          future: orderService.getReviews(food['foodName']),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text("Lỗi khi tải đánh giá");
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Text("Chưa có đánh giá.");
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: snapshot.data!.map((review) {
+                                  return ListTile(
+                                    title: Text(review.userName),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        RatingBar.builder(
+                                          initialRating: review.rating,
+                                          minRating: 1,
+                                          itemCount: 5,
+                                          itemSize: 18,
+                                          itemPadding: EdgeInsets.symmetric(
+                                              horizontal: 4),
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                          onRatingUpdate: (rating) {},
+                                        ),
+                                        Text(review.comment),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                      // Form nhập đánh giá mới
                     ],
                   ),
                 ),

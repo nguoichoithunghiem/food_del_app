@@ -35,8 +35,8 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thông tin tài khoản',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title:
+            Text('Thông tin tài khoản', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.red,
         elevation: 10,
         centerTitle: true,

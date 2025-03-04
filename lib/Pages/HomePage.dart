@@ -6,6 +6,8 @@ import 'package:food_del/Widgets/DrawerWidget.dart';
 import 'package:food_del/Widgets/NewestItemsWidget.dart';
 import 'package:food_del/Widgets/PopularItemsWidget.dart';
 import 'package:food_del/Service/FoodService.dart'; // Import FoodService để tìm kiếm món ăn
+import 'package:food_del/Service/cart_service.dart'; // Import CartService
+import 'package:provider/provider.dart'; // Để sử dụng Provider
 
 class Homepage extends StatefulWidget {
   @override
@@ -157,17 +159,15 @@ class _HomepageState extends State<Homepage> {
                                   child: Image.network(
                                     "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
                                     height: 130,
-                                    width:
-                                        130, // Đảm bảo ảnh có kích thước phù hợp với không gian
-                                    fit: BoxFit
-                                        .cover, // Điều chỉnh cách hiển thị ảnh
+                                    width: 130,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
                               Text(
                                 food['foodName'] ?? "Không có tên",
                                 style: TextStyle(
-                                  fontSize: 12, // Giảm kích thước chữ xuống 20%
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -216,7 +216,6 @@ class _HomepageState extends State<Homepage> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
-          // Truyền vào callback onCategorySelected
           CategoriesWidget(onCategorySelected: _onCategorySelected),
 
           // Hiển thị các món ăn theo danh mục nếu có
@@ -229,7 +228,6 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
 
-          // Hiển thị các món ăn theo danh mục
           if (categoryResults.isNotEmpty)
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
@@ -273,17 +271,15 @@ class _HomepageState extends State<Homepage> {
                                   child: Image.network(
                                     "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
                                     height: 130,
-                                    width:
-                                        130, // Đảm bảo ảnh có kích thước phù hợp với không gian
-                                    fit: BoxFit
-                                        .cover, // Điều chỉnh cách hiển thị ảnh
+                                    width: 130,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
                               Text(
                                 food['foodName'] ?? "Không có tên",
                                 style: TextStyle(
-                                  fontSize: 12, // Giảm kích thước chữ xuống 20%
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -346,26 +342,62 @@ class _HomepageState extends State<Homepage> {
         ],
       ),
       drawer: DrawerWidget(),
+
+      // FloatingActionButton with item count
       floatingActionButton: Container(
-        decoration:
-            BoxDecoration(borderRadius: BorderRadius.circular(20), boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ]),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/cart');
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 10,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Consumer<CartService>(
+          builder: (context, cartService, child) {
+            int itemCount =
+                cartService.itemCount; // Lấy số lượng món ăn trong giỏ hàng
+
+            return FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/cart');
+              },
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Icon(
+                    CupertinoIcons.cart,
+                    size: 28,
+                    color: Colors.red,
+                  ),
+                  if (itemCount > 0)
+                    Positioned(
+                      right: 0,
+                      top: -5,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          itemCount.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              backgroundColor: Colors.white,
+            );
           },
-          child: Icon(
-            CupertinoIcons.cart,
-            size: 28,
-            color: Colors.red,
-          ),
-          backgroundColor: Colors.white,
         ),
       ),
     );

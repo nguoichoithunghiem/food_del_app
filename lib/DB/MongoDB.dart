@@ -1,4 +1,5 @@
 import 'package:food_del/DB/Constant.dart';
+import 'package:food_del/Models/ReviewModel.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:food_del/Models/orderModel.dart';
 import 'package:food_del/Models/WishlistItem.dart'; // Import WishlistItem model
@@ -12,6 +13,7 @@ class MongoDatabase {
   static DbCollection? _orderDetailsCollection;
   static DbCollection? _wishlistsCollection; // Thêm collection wishlists
   static DbCollection? _couponsCollection; // Thêm collection coupons
+  static DbCollection? _reviewsCollection;
 
   // Kết nối MongoDB
   static Future<Db> connect() async {
@@ -187,6 +189,26 @@ class MongoDatabase {
       }
     } catch (e) {
       print("Error removing from wishlist: $e");
+    }
+  }
+
+  static DbCollection get reviewsCollection {
+    if (_db == null) {
+      throw Exception(
+          "Database not connected. Please call MongoDatabase.connect() first.");
+    }
+    _reviewsCollection ??= _db!.collection(
+        COLLECTION_REVIEW); // Make sure you define COLLECTION_REVIEW in your constants
+    return _reviewsCollection!;
+  }
+
+  // Lưu đánh giá vào MongoDB
+  static Future<void> saveReview(Review review) async {
+    try {
+      await reviewsCollection.insertOne(review.toMap());
+      print("Review saved successfully.");
+    } catch (e) {
+      print("Error saving review: $e");
     }
   }
 }

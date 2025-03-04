@@ -72,11 +72,13 @@ class DrawerWidget extends StatelessWidget {
               ),
               // Các ListTile khác
               ListTile(
-                leading: Icon(CupertinoIcons.home, color: Colors.red),
-                title: Text("Home",
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ),
+                  leading: Icon(CupertinoIcons.home, color: Colors.red),
+                  title: Text("Home",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/');
+                  }),
               ListTile(
                 leading: Icon(CupertinoIcons.person, color: Colors.red),
                 title: Text("My Account",

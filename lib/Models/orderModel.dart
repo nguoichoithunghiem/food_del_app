@@ -1,4 +1,3 @@
-// orderModel.dart
 import 'package:food_del/Models/cart_item.dart';
 
 class Order {
@@ -8,9 +7,10 @@ class Order {
   String userPhone;
   String userAddress;
   List<CartItem> items;
-  double totalPrice; // Đổi từ final thành bình thường
+  double totalPrice;
   String status;
   String note;
+  DateTime orderDate;
 
   Order({
     required this.orderId,
@@ -22,6 +22,7 @@ class Order {
     required this.totalPrice,
     required this.status,
     required this.note,
+    required this.orderDate,
   });
 
   // Phương thức khởi tạo từ Map
@@ -37,6 +38,9 @@ class Order {
       totalPrice: map['totalPrice'],
       status: map['status'],
       note: map['note'],
+      orderDate: map['orderDate'] != null
+          ? DateTime.parse(map['orderDate'])
+          : DateTime.now(),
     );
   }
 
@@ -51,6 +55,7 @@ class Order {
       'totalPrice': totalPrice,
       'status': status,
       'note': note,
+      'orderDate': orderDate.toIso8601String(),
     };
   }
 }

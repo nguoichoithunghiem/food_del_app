@@ -33,7 +33,7 @@ class _WishlistPageState extends State<WishlistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wishlist'), // Tiêu đề của trang
+        title: Text('Yêu Thích'), // Tiêu đề của trang
         backgroundColor: Colors.red, // Màu nền appBar
       ),
       body: FutureBuilder<List<WishlistItem>>(
@@ -49,7 +49,7 @@ class _WishlistPageState extends State<WishlistPage> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
                 child: Text(
-                    'No items in your wishlist')); // Hiển thị nếu wishlist trống
+                    'Bạn chưa thêm món ăn nào vào yêu thích hết')); // Hiển thị nếu wishlist trống
           } else {
             // Hiển thị danh sách món ăn nếu có dữ liệu
             var wishlist = snapshot.data!;
@@ -69,7 +69,7 @@ class _WishlistPageState extends State<WishlistPage> {
                     ),
                     title: Text(item.foodName), // Tên món ăn
                     subtitle: Text(
-                        'Price: \$${item.foodPrice.toStringAsFixed(2)}'), // Giá món ăn
+                        'Giá: ${item.foodPrice.toStringAsFixed(0)} VNĐ'), // Giá món ăn
                     trailing: IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () async {
