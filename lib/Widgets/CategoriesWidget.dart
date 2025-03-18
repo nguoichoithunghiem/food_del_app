@@ -31,28 +31,6 @@ class CategoriesWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
             child: Row(
               children: categories.map((category) {
-                IconData categoryIcon;
-
-                // Chọn icon theo tên danh mục
-                switch (category['name']) {
-                  case 'Món chính':
-                    categoryIcon = Icons.restaurant; // Món Chính -> restaurant
-                    break;
-                  case 'Món phụ':
-                    categoryIcon = Icons.kitchen; // Món Phụ -> kitchen
-                    break;
-                  case 'Món ăn kèm':
-                    categoryIcon = Icons.set_meal; // Món Ăn Kèm -> set_meal
-                    break;
-                  case 'Nước':
-                    categoryIcon = Icons.local_drink; // Nước -> local_drink
-                    break;
-                  default:
-                    categoryIcon =
-                        Icons.category; // Mặc định nếu không có tên chính xác
-                    break;
-                }
-
                 return GestureDetector(
                   onTap: () {
                     // Truyền tên danh mục khi người dùng chọn
@@ -79,12 +57,8 @@ class CategoriesWidget extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                categoryIcon, // Hiển thị icon tương ứng
-                                size: 30,
-                                color: Colors.red,
-                              ),
-                              SizedBox(height: 8),
+                              // Đã bỏ đi widget Icon
+                              SizedBox(height: 2),
                               Text(
                                 category['name'] ?? 'Không xác định',
                                 style: TextStyle(

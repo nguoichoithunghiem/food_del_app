@@ -10,11 +10,11 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   User? _user;
+  int _currentIndex = 3; // Set default index to Account page
 
   @override
   void initState() {
     super.initState();
-    // Lấy thông tin người dùng hiện tại sau khi trang được xây dựng
     _fetchUserInfo();
   }
 
@@ -53,7 +53,7 @@ class _AccountPageState extends State<AccountPage> {
                   children: [
                     _buildHeader(), // Thêm ảnh đại diện người dùng hoặc icon
                     SizedBox(height: 20),
-                    _buildInfoCard("Mã người dùng", _user!.userId),
+                    _buildInfoCard("Mã người dùng  ", _user!.userId),
                     _buildInfoCard("Email", _user!.email),
                     _buildInfoCard("Tên người dùng", _user!.userName),
                     _buildInfoCard("Số điện thoại", _user!.phone),
@@ -92,6 +92,54 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
             ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/'); // Trang chủ
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(
+                  context, '/order_history'); // Lịch sử đơn hàng
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(
+                  context, '/wishlist'); // Danh sách yêu thích
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(
+                  context, '/account'); // Tài khoản (đang ở trang này)
+              break;
+            default:
+              break;
+          }
+        },
+        backgroundColor: Colors.white, // Màu nền trắng
+        selectedItemColor: Colors.red, // Màu của icon khi được chọn
+        unselectedItemColor: Colors.black, // Màu của icon khi không được chọn
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Đơn Hàng',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.heart_broken),
+            label: 'Yêu Thích',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Tài khoản',
+          ),
+        ],
+      ),
     );
   }
 

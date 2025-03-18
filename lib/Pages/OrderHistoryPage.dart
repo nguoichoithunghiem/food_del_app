@@ -8,7 +8,14 @@ import 'package:food_del/Service/cart_service.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart'; // Import để sử dụng DateFormat
 
-class OrderHistoryPage extends StatelessWidget {
+class OrderHistoryPage extends StatefulWidget {
+  @override
+  _OrderHistoryPageState createState() => _OrderHistoryPageState();
+}
+
+class _OrderHistoryPageState extends State<OrderHistoryPage> {
+  int _currentIndex = 1; // Set default index to 1 (Lịch sử đơn hàng)
+
   @override
   Widget build(BuildContext context) {
     final user = AuthService.currentUser;
@@ -28,7 +35,9 @@ class OrderHistoryPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Lịch sử đơn hàng'),
-        backgroundColor: Colors.red, // Màu sắc AppBar
+        backgroundColor: Colors.red,
+        elevation: 10,
+        centerTitle: true, // Màu sắc AppBar
       ),
       body: FutureBuilder<List<Order>>(
         future: orderService.getOrderHistory(user.userId),
@@ -58,6 +67,52 @@ class OrderHistoryPage extends StatelessWidget {
             },
           );
         },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/order_history');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/wishlist');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/account');
+              break;
+            default:
+              break;
+          }
+        },
+        backgroundColor:
+            const Color.fromARGB(255, 255, 255, 255), // Màu nền trắng
+        selectedItemColor: Colors.red, // Màu của icon khi được chọn
+        unselectedItemColor: Colors.black, // Màu của icon khi không được chọn
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Đơn Hàng',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.heart_broken),
+            label: 'Yêu Thích',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Tài khoản',
+          ),
+        ],
       ),
     );
   }
@@ -170,9 +225,12 @@ class _OrderCardState extends State<OrderCard> {
                   }
                 },
                 child: Text('Hủy Đơn Hàng'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, // Màu nền của nút
+                  foregroundColor: Colors.white, // Màu chữ của nút
+                ),
               ),
-            ]
+            ],
           ],
         ),
       ),

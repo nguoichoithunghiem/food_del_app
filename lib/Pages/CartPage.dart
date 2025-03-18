@@ -46,7 +46,7 @@ class CartPage extends StatelessWidget {
                         Container(
                           alignment: Alignment.center,
                           child: Image.network(
-                            'https://food-del-web-backend.onrender.com/images/${cartItem.foodImage}', // Đảm bảo bạn dùng Image.network
+                            'https://food-del-backend-nm2y.onrender.com/images/${cartItem.foodImage}', // Đảm bảo bạn dùng Image.network
                             height: 80,
                             width: 80, // Giảm kích thước hình ảnh để tránh tràn
                             fit: BoxFit.cover, // Đảm bảo hình ảnh không bị vỡ

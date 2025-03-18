@@ -8,6 +8,7 @@ import 'package:food_del/Pages/LoginPage.dart';
 import 'package:food_del/Pages/OrderConfirmationPage.dart';
 import 'package:food_del/Pages/OrderHistoryPage.dart';
 import 'package:food_del/Pages/OrderPage.dart';
+import 'package:food_del/Pages/WishlistPage.dart';
 import 'package:food_del/Pages/splashscreen.dart';
 import 'package:provider/provider.dart'; // Import provider
 import 'package:food_del/Service/cart_service.dart'; // Import CartService
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         '/order_history': (context) => OrderHistoryPage(),
         '/account': (context) => AccountPage(), // Trang lịch sử đơn hàng
         '/splash': (context) => SplashScreen(),
+        '/wishlist': (context) => WishlistPage(),
       },
     );
   }

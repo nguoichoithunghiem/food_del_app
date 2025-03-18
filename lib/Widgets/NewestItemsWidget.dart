@@ -90,7 +90,7 @@ class _NewestItemsWidgetState extends State<NewestItemsWidget> {
                           child: Container(
                             alignment: Alignment.center,
                             child: Image.network(
-                              "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
+                              "https://food-del-backend-nm2y.onrender.com/images/${food['foodImage']}",
                               height: 130,
                               width: 100,
                               fit: BoxFit.cover,

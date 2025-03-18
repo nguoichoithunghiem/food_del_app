@@ -42,7 +42,7 @@ class _ItemPageState extends State<ItemPage> {
             Padding(
               padding: EdgeInsets.all(16),
               child: Image.network(
-                "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
+                "https://food-del-backend-nm2y.onrender.com/images/${food['foodImage']}",
                 height: 300,
               ),
             ),

@@ -1,3 +1,4 @@
+import 'dart:async'; // Để sử dụng Timer
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:food_del/Widgets/AppBarWidget.dart';
@@ -19,10 +20,40 @@ class _HomepageState extends State<Homepage> {
   List<Map<String, dynamic>> searchResults = [];
   String searchQuery = "";
   List<Map<String, dynamic>> categoryResults = [];
+  int _currentIndex = 0;
+
+  // Thêm một danh sách các URL của ảnh
+  final List<String> imageUrls = [
+    'https://inan2h.vn/wp-content/uploads/2022/12/in-banner-quang-cao-do-an-7-1.jpg',
+    'https://vill.vn/wp-content/uploads/2023/11/3-WEB-BANNER-MUC-KHUYEN-MAI-1024x410.png',
+    'https://vill.vn/wp-content/uploads/2024/08/WEB-Thumail-khuyen-mai-tuan-24.08-1024x641.png',
+  ];
+
+  // Tạo một controller cho PageView
+  PageController _pageController = PageController();
+
+  // Thực hiện tự động chuyển đổi ảnh mỗi 3 giây
+  void _startImageSlideshow() {
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      if (_pageController.hasClients) {
+        int nextPage = (_pageController.page?.toInt() ?? 0) + 1;
+        if (nextPage >= imageUrls.length) {
+          nextPage = 0;
+        }
+        _pageController.animateToPage(nextPage,
+            duration: Duration(seconds: 1), curve: Curves.easeInOut);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _startImageSlideshow(); // Bắt đầu slideshow khi trang được tạo
+  }
 
   // Tìm kiếm món ăn theo từ khóa
   void _searchFoods() async {
-    // Nếu không có từ khóa tìm kiếm, reset lại kết quả tìm kiếm
     if (searchQuery.isEmpty) {
       setState(() {
         searchResults = [];
@@ -30,7 +61,6 @@ class _HomepageState extends State<Homepage> {
       return;
     }
 
-    // Tìm kiếm món ăn theo tên
     var result = await FoodService.getFoodsByName(searchQuery);
     setState(() {
       searchResults = result; // Cập nhật danh sách kết quả tìm kiếm
@@ -43,6 +73,30 @@ class _HomepageState extends State<Homepage> {
     setState(() {
       categoryResults = result;
     });
+  }
+
+  // Điều hướng khi chọn mục trong BottomNavigationBar
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/order_history');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/wishlist');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/account');
+        break;
+      default:
+        break;
+    }
   }
 
   @override
@@ -60,16 +114,17 @@ class _HomepageState extends State<Homepage> {
               width: double.infinity,
               height: 50,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 10,
-                      offset: Offset(0, 3),
-                    ),
-                  ]),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
@@ -101,6 +156,27 @@ class _HomepageState extends State<Homepage> {
                     Icon(Icons.filter_list),
                   ],
                 ),
+              ),
+            ),
+          ),
+
+          // Thêm Slider ảnh dưới thanh tìm kiếm
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: Container(
+              height: 180, // Chiều cao của slider
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: imageUrls.length,
+                itemBuilder: (context, index) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      imageUrls[index],
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -147,11 +223,10 @@ class _HomepageState extends State<Homepage> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  // Điều hướng đến trang chi tiết món ăn và truyền dữ liệu
                                   Navigator.pushNamed(
                                     context,
                                     "itemPage",
-                                    arguments: food, // Truyền dữ liệu món ăn
+                                    arguments: food,
                                   );
                                 },
                                 child: Container(
@@ -174,9 +249,7 @@ class _HomepageState extends State<Homepage> {
                               SizedBox(height: 4),
                               Text(
                                 food['foodTitle'] ?? "Không có tiêu đề",
-                                style: TextStyle(
-                                  fontSize: 9,
-                                ),
+                                style: TextStyle(fontSize: 9),
                               ),
                               SizedBox(height: 12),
                               Row(
@@ -259,11 +332,10 @@ class _HomepageState extends State<Homepage> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  // Điều hướng đến trang chi tiết món ăn và truyền dữ liệu
                                   Navigator.pushNamed(
                                     context,
                                     "itemPage",
-                                    arguments: food, // Truyền dữ liệu món ăn
+                                    arguments: food,
                                   );
                                 },
                                 child: Container(
@@ -286,9 +358,7 @@ class _HomepageState extends State<Homepage> {
                               SizedBox(height: 4),
                               Text(
                                 food['foodTitle'] ?? "Không có tiêu đề",
-                                style: TextStyle(
-                                  fontSize: 9,
-                                ),
+                                style: TextStyle(fontSize: 9),
                               ),
                               SizedBox(height: 12),
                               Row(
@@ -344,61 +414,74 @@ class _HomepageState extends State<Homepage> {
       drawer: DrawerWidget(),
 
       // FloatingActionButton with item count
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 10,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Consumer<CartService>(
-          builder: (context, cartService, child) {
-            int itemCount =
-                cartService.itemCount; // Lấy số lượng món ăn trong giỏ hàng
+      floatingActionButton: Consumer<CartService>(
+        builder: (context, cartService, child) {
+          int itemCount = cartService.itemCount;
 
-            return FloatingActionButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/cart');
-              },
-              child: Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  Icon(
-                    CupertinoIcons.cart,
-                    size: 28,
-                    color: Colors.red,
-                  ),
-                  if (itemCount > 0)
-                    Positioned(
-                      right: 0,
-                      top: -5,
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          itemCount.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+          return FloatingActionButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/cart');
+            },
+            child: Stack(
+              alignment: Alignment.topRight,
+              children: [
+                Icon(
+                  CupertinoIcons.cart,
+                  size: 28,
+                  color: Colors.red,
+                ),
+                if (itemCount > 0)
+                  Positioned(
+                    right: 0,
+                    top: -5,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        itemCount.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                ],
-              ),
-              backgroundColor: Colors.white,
-            );
-          },
-        ),
+                  ),
+              ],
+            ),
+            backgroundColor: Colors.white,
+          );
+        },
+      ),
+
+      // Bottom Navigation Bar
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        backgroundColor: Colors.white, // Màu nền trắng
+        selectedItemColor: Colors.red, // Màu của icon khi được chọn
+        unselectedItemColor: Colors.black, // Màu của icon khi không được chọn
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Đơn Hàng',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.heart_broken),
+            label: 'Yêu Thích',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Tài khoản',
+          ),
+        ],
       ),
     );
   }

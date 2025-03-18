@@ -89,7 +89,7 @@ class _PopularItemsWidgetState extends State<PopularItemsWidget> {
                             child: Container(
                               alignment: Alignment.center,
                               child: Image.network(
-                                "https://food-del-web-backend.onrender.com/images/${food['foodImage']}", // URL ảnh từ MongoDB
+                                "https://food-del-backend-nm2y.onrender.com/images/${food['foodImage']}", // URL ảnh từ MongoDB
                                 height: 130,
                                 width:
                                     130, // Đảm bảo ảnh có kích thước phù hợp với không gian
