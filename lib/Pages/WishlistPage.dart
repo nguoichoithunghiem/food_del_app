@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_del/Service/WishlistService.dart'; // Import WishlistService
 import 'package:food_del/Models/WishlistItem.dart'; // Import WishlistItem
 import 'package:food_del/Service/AuthService.dart'; // Import AuthService
+import 'package:intl/intl.dart'; // Import intl package
 
 class WishlistPage extends StatefulWidget {
   @override
@@ -88,14 +89,14 @@ class _WishlistPageState extends State<WishlistPage> {
                   child: ListTile(
                     contentPadding: EdgeInsets.all(8.0),
                     leading: Image.network(
-                      "https://food-del-web-backend.onrender.com/images/${item.foodImage}", // Image URL
+                      "https://food-del-backend-nm2y.onrender.com/images/${item.foodImage}", // Image URL
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover, // Fit the image to the box
                     ),
                     title: Text(item.foodName), // Food name
                     subtitle: Text(
-                        'Giá: ${item.foodPrice.toStringAsFixed(0)} VNĐ'), // Price of the item
+                        'Giá: ${NumberFormat.simpleCurrency(locale: 'vi_VN').format(item.foodPrice)}'), // Price formatted
                     trailing: IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () async {

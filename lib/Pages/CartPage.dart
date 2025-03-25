@@ -5,6 +5,7 @@ import 'package:food_del/Service/cart_service.dart';
 import 'package:food_del/Widgets/CartBottomNavBar.dart';
 import 'package:food_del/Widgets/DrawerWidget.dart';
 import 'package:provider/provider.dart'; // Import provider
+import 'package:intl/intl.dart'; // Import intl package
 
 class CartPage extends StatelessWidget {
   @override
@@ -13,6 +14,11 @@ class CartPage extends StatelessWidget {
     final cartService = Provider.of<CartService>(context);
     final orderService =
         OrderService(cartService: cartService); // Khởi tạo OrderService
+
+    // Function to format price in Vietnamese currency
+    String formatCurrency(double price) {
+      return NumberFormat.simpleCurrency(locale: 'vi_VN').format(price);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +60,6 @@ class CartPage extends StatelessWidget {
                         ),
                         // Thông tin món ăn
                         Expanded(
-                          // Dùng Expanded thay cho Flexible để đảm bảo chiếm toàn bộ không gian còn lại
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
@@ -76,7 +81,8 @@ class CartPage extends StatelessWidget {
                                   maxLines: 1,
                                 ),
                                 Text(
-                                  "${cartItem.price.toStringAsFixed(0)} VNĐ",
+                                  formatCurrency(
+                                      cartItem.price), // Format price as VND
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,

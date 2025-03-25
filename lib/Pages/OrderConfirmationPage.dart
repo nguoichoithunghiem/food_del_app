@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:food_del/Models/orderModel.dart';
+import 'package:intl/intl.dart'; // Import the intl package for currency formatting
 
 class OrderConfirmationPage extends StatelessWidget {
+  // Helper function to format the price in Vietnamese currency
+  String formatCurrency(double price) {
+    return NumberFormat.simpleCurrency(locale: 'vi_VN').format(price);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Lấy thông tin đơn hàng từ route arguments
+    // Get order details from route arguments
     final order = ModalRoute.of(context)?.settings.arguments as Order;
 
     return Scaffold(
@@ -12,7 +18,7 @@ class OrderConfirmationPage extends StatelessWidget {
         title: Text('Xác nhận đơn hàng'),
         backgroundColor: Colors.red,
         actions: [
-          // Nút quay lại trang chủ
+          // Back to home button
           IconButton(
             icon: Icon(Icons.home),
             onPressed: () {
@@ -27,7 +33,7 @@ class OrderConfirmationPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Card cho thông tin đơn hàng
+              // Card for order information
               Card(
                 elevation: 4.0,
                 margin: EdgeInsets.symmetric(vertical: 8.0),
@@ -51,7 +57,7 @@ class OrderConfirmationPage extends StatelessWidget {
                 ),
               ),
 
-              // Hiển thị các món ăn trong đơn hàng
+              // Displaying items in the order
               Text('Các món ăn trong đơn:',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
@@ -68,9 +74,9 @@ class OrderConfirmationPage extends StatelessWidget {
                         title: Text(cartItem.foodName,
                             style: TextStyle(fontSize: 16)),
                         subtitle: Text(
-                            "Số lượng: ${cartItem.quantity} x ${cartItem.price} VNĐ"),
+                            "Số lượng: ${cartItem.quantity} x ${formatCurrency(cartItem.price)}"),
                         trailing: Text(
-                          "${cartItem.price * cartItem.quantity} VNĐ",
+                          "${formatCurrency(cartItem.price * cartItem.quantity)}",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.red),
                         ),
@@ -80,7 +86,7 @@ class OrderConfirmationPage extends StatelessWidget {
                 ),
               ),
 
-              // Hiển thị tổng tiền
+              // Displaying total price
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
@@ -89,7 +95,7 @@ class OrderConfirmationPage extends StatelessWidget {
                     Text("Tổng tiền:",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text("${order.totalPrice} VNĐ",
+                    Text("${formatCurrency(order.totalPrice)}",
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -98,28 +104,28 @@ class OrderConfirmationPage extends StatelessWidget {
                 ),
               ),
 
-              // Hiển thị thông tin ghi chú và trạng thái
+              // Displaying note and status
               SizedBox(height: 16),
               Text('Ghi chú: ${order.note}', style: TextStyle(fontSize: 16)),
               SizedBox(height: 8),
-              Text('Trạng thái: ${order.status}',
+              Text('Trạng thái: Đang xử lý',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: order.status == 'Delivered'
-                          ? Colors.red
+                          ? Colors.green
                           : Colors.red)),
 
-              // Nút quay lại
+              // Button to go back to home
               SizedBox(height: 30),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/'); // Quay lại trang chủ
+                    Navigator.pushNamed(context, '/'); // Go back to home
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Màu cam 0xFFFF5722 cho nền
-                    foregroundColor: Colors.white, // Màu trắng cho chữ
+                    backgroundColor: Colors.red, // Red color for background
+                    foregroundColor: Colors.white, // White color for text
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                     textStyle: TextStyle(fontSize: 18),
                   ),

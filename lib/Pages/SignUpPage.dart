@@ -58,7 +58,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Color(0xFFFF5722), // Màu đỏ cam (HEX: #FF5722)
+          color: Color(0xFFFF3131), // Màu đỏ cam (HEX: #FF5722)
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -69,17 +69,18 @@ class _SignUpPageState extends State<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20), // Thêm padding top cho tiêu đề
+                  padding: const EdgeInsets.only(top: 40),
                   child: Text(
-                    'Đăng ký tài khoản mới',
+                    'Đăng ký tài khoản',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
+                SizedBox(height: 30),
+                Image.asset('images/TastyGo.png', height: 150),
+
                 SizedBox(height: 30),
 
                 // Form đăng ký
@@ -235,7 +236,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 16, horizontal: 32),
                               backgroundColor:
-                                  Color(0xFFFF5722), // Màu sắc của nút
+                                  Color(0xFFFF3131), // Màu sắc của nút
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
@@ -249,30 +250,29 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ),
                           ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                              );
+                            },
+                            child: Text(
+                              'Đã có tài khoản? Đăng nhập ngay',
+                              style: TextStyle(
+                                color: Colors.blue, // Màu của TextButton
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
 
-                SizedBox(height: 20),
-
                 // Liên kết đăng nhập
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                  },
-                  child: Text(
-                    'Đã có tài khoản? Đăng nhập ngay',
-                    style: TextStyle(
-                      color: Color(0xFFFF5722), // Màu của TextButton
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

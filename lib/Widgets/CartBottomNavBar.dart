@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:food_del/Service/cart_service.dart'; // Import CartService
+import 'package:intl/intl.dart'; // Import intl package for currency formatting
 
 class CartBottomNavBar extends StatelessWidget {
   @override
@@ -9,6 +10,11 @@ class CartBottomNavBar extends StatelessWidget {
     final cartService = Provider.of<CartService>(context);
 
     double totalPrice = cartService.getTotal(); // Lấy tổng tiền từ CartService
+
+    // Function to format the price as Vietnamese currency
+    String formatCurrency(double price) {
+      return NumberFormat.simpleCurrency(locale: 'vi_VN').format(price);
+    }
 
     return BottomAppBar(
       child: Container(
@@ -20,7 +26,7 @@ class CartBottomNavBar extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  "Total:",
+                  "Total: ",
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.bold,
@@ -29,8 +35,9 @@ class CartBottomNavBar extends StatelessWidget {
                 SizedBox(
                   width: 15,
                 ),
+                // Display formatted price
                 Text(
-                  "${totalPrice.toStringAsFixed(0)} VNĐ", // Hiển thị tổng tiền
+                  formatCurrency(totalPrice), // Format the total price as VND
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.bold,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_del/Service/FoodService.dart';
 import 'package:food_del/Service/WishlistService.dart'; // Import WishlistService
 import 'package:food_del/Service/AuthService.dart'; // Import AuthService
-import 'package:provider/provider.dart'; // Import Provider
+import 'package:intl/intl.dart'; // Import intl package
 
 class PopularItemsWidget extends StatefulWidget {
   @override
@@ -54,6 +54,13 @@ class _PopularItemsWidgetState extends State<PopularItemsWidget> {
                 // Kiểm tra xem món ăn đã có trong wishlist chưa
                 bool isInWishlist =
                     _wishlistStatus[food['_id'].toString()] ?? false;
+
+                // Định dạng tiền VNĐ
+                String formattedPrice = NumberFormat.currency(
+                  locale: 'vi_VN',
+                  symbol: 'VNĐ',
+                  decimalDigits: 0, // Không cần hiển thị phần thập phân
+                ).format(food['foodPrice']);
 
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 7),
@@ -117,7 +124,7 @@ class _PopularItemsWidgetState extends State<PopularItemsWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "${food['foodPrice'] ?? 0} VNĐ", // Giá món ăn
+                                formattedPrice, // Giá món ăn đã được định dạng
                                 style: TextStyle(
                                   fontSize: 12, // Reduced by 30%
                                   color: Colors.red,

@@ -44,26 +44,22 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: Colors.white, // Màu nền của splash screen
       body: Center(
         child: FadeTransition(
-          opacity: _animation, // Điều khiển sự mờ dần của logo qua animation
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo của ứng dụng
-              Image.network(
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb0ZJ4dX0fFgUUYrn4veEkBTzRpmbFKP0Ptg&s",
-                  height: 150), // Đặt logo của bạn tại assets/logo.png
-              SizedBox(height: 20),
-              Text(
-                'Food Delivery App', // Tên ứng dụng
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
+            opacity: _animation, // Điều khiển sự mờ dần của logo qua animation
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo của ứng dụng dưới dạng hình tròn
+                ClipOval(
+                  child: Image.asset(
+                    'images/TastyGo.png',
+                    height: 300, // Đặt chiều cao logo
+                    width:
+                        300, // Đặt chiều rộng logo để nó thành hình vuông trước khi cắt thành hình tròn
+                    fit: BoxFit.cover, // Đảm bảo hình ảnh phủ đầy không gian
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            )),
       ),
     );
   }

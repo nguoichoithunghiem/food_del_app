@@ -10,6 +10,7 @@ import 'package:food_del/Service/cart_service.dart'; // Import CartService
 import 'package:food_del/Models/ReviewModel.dart'; // Import ReviewModel
 import 'package:food_del/Widgets/DrawerWidget.dart'; // Import DrawerWidget
 import 'package:provider/provider.dart'; // Import Provider
+import 'package:intl/intl.dart'; // Import intl package để định dạng tiền
 
 class ItemPage extends StatefulWidget {
   @override
@@ -20,6 +21,16 @@ class _ItemPageState extends State<ItemPage> {
   int _quantity = 1; // Biến lưu số lượng món ăn
   double _rating = 0.0; // Biến lưu rating của người dùng
   String _comment = ''; // Biến lưu bình luận của người dùng
+
+  // Định dạng tiền VNĐ
+  String formatCurrency(double amount) {
+    final format = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: 'VNĐ',
+      decimalDigits: 0, // Không cần hiển thị phần thập phân
+    );
+    return format.format(amount);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +88,8 @@ class _ItemPageState extends State<ItemPage> {
                               onRatingUpdate: (rating) {},
                             ),
                             Text(
-                              "${food['foodPrice'] ?? 0} VND",
+                              formatCurrency(
+                                  food['foodPrice']?.toDouble() ?? 0),
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -257,7 +269,6 @@ class _ItemPageState extends State<ItemPage> {
                           },
                         ),
                       ),
-                      // Form nhập đánh giá mới
                     ],
                   ),
                 ),

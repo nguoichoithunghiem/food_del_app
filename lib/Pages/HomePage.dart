@@ -9,6 +9,7 @@ import 'package:food_del/Widgets/PopularItemsWidget.dart';
 import 'package:food_del/Service/FoodService.dart'; // Import FoodService để tìm kiếm món ăn
 import 'package:food_del/Service/cart_service.dart'; // Import CartService
 import 'package:provider/provider.dart'; // Để sử dụng Provider
+import 'package:intl/intl.dart'; // Import thư viện intl để định dạng tiền tệ
 
 class Homepage extends StatefulWidget {
   @override
@@ -97,6 +98,13 @@ class _HomepageState extends State<Homepage> {
       default:
         break;
     }
+  }
+
+  // Định nghĩa phương thức format số tiền
+  String formatPrice(int price) {
+    var format =
+        NumberFormat.simpleCurrency(locale: 'vi_VN'); // Định dạng tiền Việt
+    return format.format(price); // Trả về giá trị đã được format
   }
 
   @override
@@ -232,7 +240,7 @@ class _HomepageState extends State<Homepage> {
                                 child: Container(
                                   alignment: Alignment.center,
                                   child: Image.network(
-                                    "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
+                                    "https://food-del-backend-nm2y.onrender.com/images/${food['foodImage']}",
                                     height: 130,
                                     width: 130,
                                     fit: BoxFit.cover,
@@ -257,7 +265,8 @@ class _HomepageState extends State<Homepage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${food['foodPrice'] ?? 0} VNĐ",
+                                    formatPrice(food['foodPrice'] ??
+                                        0), // Sử dụng formatPrice để hiển thị tiền
                                     style: TextStyle(
                                       fontSize: 17,
                                       color: Colors.red,
@@ -286,7 +295,8 @@ class _HomepageState extends State<Homepage> {
             padding: EdgeInsets.only(top: 20, left: 10),
             child: Text(
               "Danh mục",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red),
             ),
           ),
           CategoriesWidget(onCategorySelected: _onCategorySelected),
@@ -341,7 +351,7 @@ class _HomepageState extends State<Homepage> {
                                 child: Container(
                                   alignment: Alignment.center,
                                   child: Image.network(
-                                    "https://food-del-web-backend.onrender.com/images/${food['foodImage']}",
+                                    "https://food-del-backend-nm2y.onrender.com/images/${food['foodImage']}",
                                     height: 130,
                                     width: 130,
                                     fit: BoxFit.cover,
@@ -366,7 +376,8 @@ class _HomepageState extends State<Homepage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${food['foodPrice'] ?? 0} VNĐ",
+                                    formatPrice(food['foodPrice'] ??
+                                        0), // Sử dụng formatPrice để hiển thị tiền
                                     style: TextStyle(
                                       fontSize: 17,
                                       color: Colors.red,
@@ -395,7 +406,8 @@ class _HomepageState extends State<Homepage> {
             padding: EdgeInsets.only(top: 20, left: 10),
             child: Text(
               "Món ăn phổ biến",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red),
             ),
           ),
           PopularItemsWidget(),
@@ -405,7 +417,8 @@ class _HomepageState extends State<Homepage> {
             padding: EdgeInsets.only(top: 20, left: 10),
             child: Text(
               "Món ăn mới nhất",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red),
             ),
           ),
           NewestItemsWidget(),

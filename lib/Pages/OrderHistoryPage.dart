@@ -143,6 +143,9 @@ class _OrderCardState extends State<OrderCard> {
     String formattedDate =
         DateFormat('dd/MM/yyyy HH:mm').format(_order.orderDate);
 
+    // Định dạng tiền tệ
+    var formatter = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
     // Cập nhật trạng thái
     String statusMessage = _getStatusMessage(_order.status);
 
@@ -168,7 +171,7 @@ class _OrderCardState extends State<OrderCard> {
               "Trạng thái: $statusMessage",
               style: TextStyle(fontSize: 14, color: Colors.green),
             ),
-            Text("Tổng giá: ${_order.totalPrice} VND",
+            Text("Tổng giá: ${formatter.format(_order.totalPrice)}",
                 style: TextStyle(fontSize: 14, color: Colors.black87)),
             SizedBox(height: 8),
             Text("Địa chỉ giao hàng: ${_order.userAddress}",
@@ -190,7 +193,8 @@ class _OrderCardState extends State<OrderCard> {
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.fastfood, color: Colors.red),
                 title: Text(item.foodName, style: TextStyle(fontSize: 14)),
-                subtitle: Text("Giá: ${item.price} VND x ${item.quantity}",
+                subtitle: Text(
+                    "Giá: ${formatter.format(item.price)} x ${item.quantity}",
                     style: TextStyle(fontSize: 12, color: Colors.black54)),
                 trailing: _order.status == 'completed' // Kiểm tra trạng thái
                     ? IconButton(
@@ -210,24 +214,27 @@ class _OrderCardState extends State<OrderCard> {
             if (_order.status != 'completed' &&
                 _order.status != 'canceled') ...[
               SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () async {
-                  bool confirmCancel = await _showCancelDialog(context);
-                  if (confirmCancel) {
-                    await widget.orderService.cancelOrder(_order.orderId);
-                    setState(() {
-                      // Cập nhật trạng thái đơn hàng sau khi hủy
-                      _order.status = 'canceled'; // Cập nhật trạng thái hủy
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Đơn hàng đã được hủy."),
-                    ));
-                  }
-                },
-                child: Text('Hủy Đơn Hàng'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Màu nền của nút
-                  foregroundColor: Colors.white, // Màu chữ của nút
+              Center(
+                // Dùng Center để căn giữa nút
+                child: ElevatedButton(
+                  onPressed: () async {
+                    bool confirmCancel = await _showCancelDialog(context);
+                    if (confirmCancel) {
+                      await widget.orderService.cancelOrder(_order.orderId);
+                      setState(() {
+                        // Cập nhật trạng thái đơn hàng sau khi hủy
+                        _order.status = 'canceled'; // Cập nhật trạng thái hủy
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Đơn hàng đã được hủy."),
+                      ));
+                    }
+                  },
+                  child: Text('Hủy Đơn Hàng'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Màu nền của nút
+                    foregroundColor: Colors.white, // Màu chữ của nút
+                  ),
                 ),
               ),
             ],

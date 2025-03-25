@@ -5,6 +5,7 @@ import 'package:food_del/Service/OrderService.dart';
 import 'package:food_del/Service/AuthService.dart';
 import 'package:food_del/Models/userModel.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart'; // Import intl package for currency formatting
 
 class OrderPage extends StatefulWidget {
   @override
@@ -16,17 +17,21 @@ class _OrderPageState extends State<OrderPage> {
   final TextEditingController userAddressController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
   final TextEditingController couponController = TextEditingController();
-  double totalPrice = 0.0; // Tổng tiền sau khi giảm giá
-  double discountAmount = 0.0; // Số tiền giảm
-  bool isCouponApplied =
-      false; // Cờ kiểm tra xem mã giảm giá đã được áp dụng chưa
+  double totalPrice = 0.0; // Total price after discount
+  double discountAmount = 0.0; // Discount amount
+  bool isCouponApplied = false; // Flag to check if coupon has been applied
+
+  // Helper function to format the price
+  String formatCurrency(double price) {
+    return NumberFormat.simpleCurrency(locale: 'vi_VN').format(price);
+  }
 
   @override
   Widget build(BuildContext context) {
     final cartService = Provider.of<CartService>(context);
     final orderService = OrderService(cartService: cartService);
 
-    // Lấy thông tin người dùng hiện tại từ AuthService
+    // Get the current user information from AuthService
     final User? user = AuthService.currentUser;
 
     if (user == null) {
@@ -35,16 +40,16 @@ class _OrderPageState extends State<OrderPage> {
       );
     }
 
-    // Tính tổng tiền gốc
+    // Calculate the original total price
     double originalTotal = cartService.getTotal();
 
-    // Hàm tính tổng tiền sau khi áp dụng giảm giá
+    // Function to calculate total after discount
     double calculateTotalAfterDiscount(double originalTotal, double discount) {
       if (discount < 1) {
-        // Giảm giá theo tỷ lệ phần trăm
+        // Discount as a percentage
         return originalTotal * (1 - discount);
       } else {
-        // Giảm giá theo số tiền cố định
+        // Discount as a fixed amount
         return originalTotal - discount;
       }
     }
@@ -58,7 +63,7 @@ class _OrderPageState extends State<OrderPage> {
         padding: EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Form thông tin người dùng
+            // User information form
             Container(
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -82,47 +87,57 @@ class _OrderPageState extends State<OrderPage> {
                       userAddressController, 'Địa chỉ', Icons.location_on),
                   _buildTextField(
                       noteController, 'Ghi chú (Tùy chọn)', Icons.note_add),
-                  _buildTextField(
-                      couponController, 'Mã giảm giá', Icons.local_offer),
                   SizedBox(height: 16),
-                  if (!isCouponApplied)
-                    ElevatedButton(
-                      onPressed: () async {
-                        String couponCode = couponController.text;
-                        double discount =
-                            await orderService.applyCoupon(couponCode);
 
-                        if (discount > 0) {
-                          setState(() {
-                            discountAmount = discount;
-                            totalPrice = calculateTotalAfterDiscount(
-                                cartService.getTotal(), discount);
-                            isCouponApplied = true;
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Mã giảm giá đã được áp dụng!')),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Mã giảm giá không hợp lệ!')),
-                          );
-                        }
-                      },
-                      child: Text("Áp dụng mã giảm giá"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red, // Màu nền nút
-                        foregroundColor: Colors.white, // Màu chữ nút
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  // Row to place the coupon input and apply button on the same line
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                            couponController, 'Mã giảm giá', Icons.local_offer),
                       ),
-                    ),
+                      SizedBox(width: 10),
+                      if (!isCouponApplied)
+                        ElevatedButton(
+                          onPressed: () async {
+                            String couponCode = couponController.text;
+                            double discount =
+                                await orderService.applyCoupon(couponCode);
+
+                            if (discount > 0) {
+                              setState(() {
+                                discountAmount = discount;
+                                totalPrice = calculateTotalAfterDiscount(
+                                    cartService.getTotal(), discount);
+                                isCouponApplied = true;
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Mã giảm giá đã được áp dụng!')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text('Mã giảm giá không hợp lệ!')),
+                              );
+                            }
+                          },
+                          child: Text("Áp dụng"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red, // Button color
+                            foregroundColor: Colors.white, // Button text color
+                            padding: EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 16),
+                          ),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),
             SizedBox(height: 20),
-            // Danh sách món trong giỏ hàng
+            // List of items in the cart
             Text('Món trong giỏ hàng của bạn:', style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
             Container(
@@ -147,38 +162,39 @@ class _OrderPageState extends State<OrderPage> {
                     title:
                         Text(cartItem.foodName, style: TextStyle(fontSize: 16)),
                     subtitle: Text(
-                        "Số lượng: ${cartItem.quantity} x ${cartItem.price} VNĐ"),
-                    trailing: Text("${cartItem.price * cartItem.quantity} VNĐ",
+                        "Số lượng: ${cartItem.quantity} x ${formatCurrency(cartItem.price)}"),
+                    trailing: Text(
+                        "${formatCurrency(cartItem.price * cartItem.quantity)}",
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   );
                 }).toList(),
               ),
             ),
             SizedBox(height: 20),
-            // Thông tin tổng tiền và chi tiết giảm giá
+            // Total price and discount details
             Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Tổng tiền gốc: ${cartService.getTotal()} VNĐ",
+                    "Tổng tiền gốc: ${formatCurrency(cartService.getTotal())}",
                     style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                   if (isCouponApplied)
                     Text(
-                        "Giảm giá: -${(discountAmount * cartService.getTotal()).toStringAsFixed(0)} VNĐ",
+                        "Giảm giá: -${formatCurrency(discountAmount * cartService.getTotal())}",
                         style: TextStyle(fontSize: 18, color: Colors.green)),
                   if (isCouponApplied)
                     Text(
-                      "Tổng sau giảm giá: $totalPrice VNĐ",
+                      "Tổng sau giảm giá: ${formatCurrency(totalPrice)}",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                 ],
               ),
             ),
-            // Nút đặt hàng
+            // Order button
             ElevatedButton(
               onPressed: () async {
                 if (cartService.items.isEmpty) {
@@ -188,12 +204,12 @@ class _OrderPageState extends State<OrderPage> {
                   return;
                 }
 
-                // Lấy thông tin người dùng
+                // Get user info
                 String userPhone = userPhoneController.text;
                 String userAddress = userAddressController.text;
                 String note = noteController.text;
 
-                // Tạo đơn hàng
+                // Create the order
                 Order order = orderService.createOrder(
                   user: user,
                   userPhone: userPhone,
@@ -201,25 +217,25 @@ class _OrderPageState extends State<OrderPage> {
                   note: note,
                 );
 
-                // Cập nhật giá tổng sau giảm giá
+                // Set the total price after discount
                 order.totalPrice = isCouponApplied ? totalPrice : originalTotal;
 
-                // Lưu đơn hàng vào cơ sở dữ liệu
+                // Save the order to the database
                 await orderService.saveOrder(order);
 
-                // Hiển thị thông báo thành công
+                // Show success message
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Đơn hàng của bạn đã được đặt!')),
                 );
 
-                // Chuyển hướng đến trang xác nhận đơn hàng
+                // Navigate to the order confirmation page
                 Navigator.pushNamed(context, '/order_confirmation',
                     arguments: order);
               },
               child: Text("Đặt hàng"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Màu nền nút
-                foregroundColor: Colors.white, // Màu chữ nút
+                backgroundColor: Colors.red, // Button background color
+                foregroundColor: Colors.white, // Button text color
                 padding: EdgeInsets.symmetric(vertical: 14),
               ),
             ),
@@ -229,7 +245,7 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  // Phương thức phụ để xây dựng các trường nhập liệu
+  // Helper method to build text fields
   Widget _buildTextField(
       TextEditingController controller, String label, IconData icon) {
     return Padding(

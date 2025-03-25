@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Color(0xFFFF5722), // Màu đỏ cam
+          color: Color(0xFFFF3131), // Màu đỏ cam
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 80),
+                  padding: const EdgeInsets.only(top: 40),
                   child: Text(
                     'Đăng nhập vào tài khoản của bạn',
                     style: TextStyle(
@@ -76,6 +76,9 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.white),
                   ),
                 ),
+                SizedBox(height: 30),
+                Image.asset('images/TastyGo.png', height: 150),
+
                 SizedBox(height: 30),
 
                 // Form đăng nhập
@@ -134,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 16, horizontal: 32),
-                                    backgroundColor: Color(0xFFFF5722),
+                                    backgroundColor: Color(0xFFFF3131),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(30)),
@@ -156,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                             },
                             child: Text('Chưa có tài khoản? Đăng ký ngay',
                                 style: TextStyle(
-                                    color: Color(0xFFFF5722), fontSize: 16)),
+                                    color: Colors.blue, fontSize: 16)),
                           ),
                         ],
                       ),

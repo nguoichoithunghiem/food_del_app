@@ -7,6 +7,7 @@ import 'package:food_del/Service/cart_service.dart'; // Import CartService
 import 'package:food_del/Service/WishlistService.dart'; // Import WishlistService
 import 'package:food_del/Service/AuthService.dart'; // Import AuthService
 import 'package:provider/provider.dart'; // Import Provider
+import 'package:intl/intl.dart'; // Import intl package để định dạng tiền
 
 class NewestItemsWidget extends StatefulWidget {
   @override
@@ -50,6 +51,16 @@ class _NewestItemsWidgetState extends State<NewestItemsWidget> {
 
         final currentUser = AuthService.currentUser;
         final userId = currentUser?.userId;
+
+        // Định dạng tiền VNĐ
+        String formatCurrency(double amount) {
+          final format = NumberFormat.currency(
+            locale: 'vi_VN',
+            symbol: 'VNĐ',
+            decimalDigits: 0, // Không cần hiển thị phần thập phân
+          );
+          return format.format(amount);
+        }
 
         return SingleChildScrollView(
           child: Padding(
@@ -132,7 +143,8 @@ class _NewestItemsWidgetState extends State<NewestItemsWidget> {
                                 onRatingUpdate: (rating) {},
                               ),
                               Text(
-                                " ${(food['foodPrice'] ?? 0).toDouble().toStringAsFixed(0)} VNĐ",
+                                formatCurrency(food['foodPrice']?.toDouble() ??
+                                    0), // Định dạng giá
                                 style: TextStyle(
                                   fontSize: 14, // Reduced by 30% from 20
                                   color: Colors.red,

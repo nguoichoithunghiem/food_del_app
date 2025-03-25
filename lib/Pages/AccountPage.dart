@@ -53,7 +53,7 @@ class _AccountPageState extends State<AccountPage> {
                   children: [
                     _buildHeader(), // Thêm ảnh đại diện người dùng hoặc icon
                     SizedBox(height: 20),
-                    _buildInfoCard("Mã người dùng  ", _user!.userId),
+
                     _buildInfoCard("Email", _user!.email),
                     _buildInfoCard("Tên người dùng", _user!.userName),
                     _buildInfoCard("Số điện thoại", _user!.phone),
@@ -71,12 +71,15 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                         );
                       },
-                      child: Text(
-                        "Cập nhật thông tin",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white, // Đảm bảo chữ có màu đen
+                      child: Center(
+                        // Thêm widget Center để căn giữa chữ
+                        child: Text(
+                          "Cập nhật thông tin",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white, // Đảm bảo chữ có màu trắng
+                          ),
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -87,7 +90,7 @@ class _AccountPageState extends State<AccountPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
