@@ -77,7 +77,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 30),
-                Image.asset('images/TastyGo.png', height: 150),
+                ClipOval(
+                  child: Image.asset(
+                    'images/TastyGo.webp',
+                    height: 150, // Đặt chiều cao logo
+                    width:
+                        150, // Đặt chiều rộng logo để nó thành hình vuông trước khi cắt thành hình tròn
+                    fit: BoxFit.cover, // Đảm bảo hình ảnh phủ đầy không gian
+                  ),
+                ),
 
                 SizedBox(height: 30),
 

@@ -293,12 +293,33 @@ class _HomepageState extends State<Homepage> {
           // Danh mục
           Padding(
             padding: EdgeInsets.only(top: 20, left: 10),
-            child: Text(
-              "Danh mục",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red),
+            child: Stack(
+              children: [
+                // Viền chữ
+                Text(
+                  "Danh mục",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()
+                      ..style = PaintingStyle.stroke
+                      ..strokeWidth = 2
+                      ..color = Colors.black, // Màu viền
+                  ),
+                ),
+                // Chữ chính
+                Text(
+                  "Danh mục",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFF3131), // Màu chữ
+                  ),
+                ),
+              ],
             ),
           ),
+
           CategoriesWidget(onCategorySelected: _onCategorySelected),
 
           // Hiển thị các món ăn theo danh mục nếu có
@@ -404,23 +425,65 @@ class _HomepageState extends State<Homepage> {
           // Món ăn phổ biến
           Padding(
             padding: EdgeInsets.only(top: 20, left: 10),
-            child: Text(
-              "Món ăn phổ biến",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red),
+            child: Stack(
+              children: [
+                // Viền chữ
+                Text(
+                  "Món ăn phổ biến",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()
+                      ..style = PaintingStyle.stroke
+                      ..strokeWidth = 2
+                      ..color = Colors.black, // Màu viền
+                  ),
+                ),
+                // Chữ chính
+                Text(
+                  "Món ăn phổ biến",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFF3131), // Màu chữ
+                  ),
+                ),
+              ],
             ),
           ),
+
           PopularItemsWidget(),
 
           // Món ăn mới nhất
           Padding(
             padding: EdgeInsets.only(top: 20, left: 10),
-            child: Text(
-              "Món ăn mới nhất",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red),
+            child: Stack(
+              children: [
+                // Viền chữ
+                Text(
+                  "Món ăn mới nhất",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()
+                      ..style = PaintingStyle.stroke
+                      ..strokeWidth = 2
+                      ..color = Colors.black, // Màu viền
+                  ),
+                ),
+                // Chữ chính
+                Text(
+                  "Món ăn mới nhất",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFF3131), // Màu chữ
+                  ),
+                ),
+              ],
             ),
           ),
+
           NewestItemsWidget(),
         ],
       ),

@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen>
                 // Logo của ứng dụng dưới dạng hình tròn
                 ClipOval(
                   child: Image.asset(
-                    'images/TastyGo.png',
+                    'images/TastyGo.webp',
                     height: 300, // Đặt chiều cao logo
                     width:
                         300, // Đặt chiều rộng logo để nó thành hình vuông trước khi cắt thành hình tròn

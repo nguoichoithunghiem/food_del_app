@@ -153,7 +153,8 @@ class _AccountPageState extends State<AccountPage> {
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundImage: AssetImage("images/avatar.jpg"),
+            backgroundImage: NetworkImage(
+                "https://cdn.oneesports.vn/cdn-data/sites/4/2022/12/LQM-ThayGiaoBa-choi-LienQuan-1.jpg"),
           ),
           SizedBox(height: 10),
           Text(

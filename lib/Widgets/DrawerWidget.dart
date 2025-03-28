@@ -66,7 +66,8 @@ class DrawerWidget extends StatelessWidget {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   currentAccountPicture: CircleAvatar(
-                    backgroundImage: AssetImage("images/avatar.jpg"),
+                    backgroundImage: NetworkImage(
+                        "https://cdn.oneesports.vn/cdn-data/sites/4/2022/12/LQM-ThayGiaoBa-choi-LienQuan-1.jpg"),
                   ),
                 ),
               ),
